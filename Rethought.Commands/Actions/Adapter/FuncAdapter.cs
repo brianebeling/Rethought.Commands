@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Rethought.Commands.Action.Adapter
+namespace Rethought.Commands.Actions.Adapter
 {
     public class FuncAdapter<TContext> : IAsyncAction<TContext>
     {

@@ -1,11 +1,11 @@
 ﻿using System;
 using Optional;
-using Rethought.Commands.Action;
-using Rethought.Commands.Action.Conditions;
+using Rethought.Commands.Actions;
+using Rethought.Commands.Actions.Conditions;
 using Rethought.Commands.Conditions;
 using Rethought.Extensions.Optional;
 
-namespace Rethought.Commands.Builder.Visitors
+namespace Rethought.Commands.Visitors
 {
     public class ConditionVisitor<TContext> : IVisitor<TContext>
     {

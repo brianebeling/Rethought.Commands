@@ -1,10 +1,11 @@
 ﻿using System;
 using Optional;
-using Rethought.Commands.Action;
+using Rethought.Commands.Actions;
+using Rethought.Commands.Builder;
 using Rethought.Commands.Parser;
 using Rethought.Extensions.Optional;
 
-namespace Rethought.Commands.Builder.Visitors
+namespace Rethought.Commands.Visitors
 {
     public class AsyncAdapterVisitor<TContext, TCommandSpecificContext> : IVisitor<TContext>
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Optional;
-using Rethought.Commands.Action.Adapter;
+using Rethought.Commands.Actions.Adapter;
 using Rethought.Commands.Conditions;
 using Rethought.Commands.Parser;
 

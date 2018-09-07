@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Rethought.Commands.Conditions;
 
-namespace Rethought.Commands.Action.Conditions
+namespace Rethought.Commands.Actions.Conditions
 {
     public class ConditionalAsyncAction<TContext> : IAsyncAction<TContext>
     {

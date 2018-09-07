@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Rethought.Commands.Action
+namespace Rethought.Commands.Actions
 {
     public interface IAsyncAction<in TContext>
     {

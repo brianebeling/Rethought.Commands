@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Optional;
-using Rethought.Commands.Action;
-using Rethought.Commands.Builder.Visitors;
+using Rethought.Commands.Actions;
+using Rethought.Commands.Visitors;
 using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Builder

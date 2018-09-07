@@ -1,11 +1,11 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Optional;
-using Rethought.Commands.Action;
-using Rethought.Commands.Action.Adapter;
+using Rethought.Commands.Actions;
+using Rethought.Commands.Actions.Adapter;
 using Rethought.Extensions.Optional;
 
-namespace Rethought.Commands.Builder.Visitors
+namespace Rethought.Commands.Visitors
 {
     public class ActionVisitor<TContext> : IVisitor<TContext>
     {

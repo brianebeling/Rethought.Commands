@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Rethought.Commands.Parser;
 using Rethought.Extensions.Optional;
 
-namespace Rethought.Commands.Action
+namespace Rethought.Commands.Actions
 {
     public class ContextAdapterAsyncActionDecorator<TIncomingContext, TOutgoingContext> : IAsyncAction<TIncomingContext>
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Rethought.Commands.Action.Adapter
+namespace Rethought.Commands.Actions.Adapter
 {
     public class ActionAdapter<TContext> : IAction<TContext>
     {

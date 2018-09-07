@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Rethought.Commands.Action;
-using Rethought.Commands.Builder.Visitors;
+using Rethought.Commands.Actions;
 using Rethought.Commands.Conditions;
 using Rethought.Commands.Parser;
+using Rethought.Commands.Visitors;
 
 namespace Rethought.Commands.Builder
 {

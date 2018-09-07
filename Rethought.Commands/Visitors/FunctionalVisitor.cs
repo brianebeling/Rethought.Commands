@@ -1,8 +1,8 @@
 ﻿using System;
 using Optional;
-using Rethought.Commands.Action;
+using Rethought.Commands.Actions;
 
-namespace Rethought.Commands.Builder.Visitors
+namespace Rethought.Commands.Visitors
 {
     public class FunctionalVisitor<TContext> : IVisitor<TContext>
     {

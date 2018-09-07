@@ -1,4 +1,4 @@
-﻿namespace Rethought.Commands.Action
+﻿namespace Rethought.Commands.Actions
 {
     public interface IAction<in TContext>
     {
