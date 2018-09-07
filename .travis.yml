@@ -1,0 +1,21 @@
+language: csharp
+mono: none
+dotnet: 2.0.0
+dist: trusty
+sudo: required
+
+install:
+- dotnet restore
+
+script:
+- dotnet build -c Release
+- dotnet pack -c Release
+
+
+deploy:
+  provider: script
+  skip_cleanup: true
+  script:
+  - cd Rethought.Commands/bin/Release && dotnet nuget push *.nupkg --source $NUGET_FEEDURL --api-key $NUGET_KEY
+  on:
+    branch: master
