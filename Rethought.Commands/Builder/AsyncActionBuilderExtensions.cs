@@ -48,6 +48,16 @@ namespace Rethought.Commands.Builder
             return asyncActionBuilder;
         }
 
+        public static AsyncActionBuilder<TContext> WithAdapter<TContext, TCommandSpecificContext>(
+            this AsyncActionBuilder<TContext> asyncActionBuilder,
+            ITypeParser<TContext, TCommandSpecificContext> typeParser,
+            Action<AsyncActionBuilder<TCommandSpecificContext>> configuration)
+        {
+            asyncActionBuilder.AddBuildingStep(
+                new AdapterVisitor<TContext, TCommandSpecificContext>(typeParser, configuration));
+            return asyncActionBuilder;
+        }
+
         public static AsyncActionBuilder<TContext> WithAsyncAction<TContext>(
             this AsyncActionBuilder<TContext> asyncActionBuilder, IAsyncAction<TContext> asyncAction)
         {
