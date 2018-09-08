@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Optional;
 using Rethought.Commands.Actions;
 using Rethought.Commands.Visitors;
@@ -35,7 +36,7 @@ namespace Rethought.Commands.Builder
         {
             Option<IAsyncAction<TContext>> next = default;
 
-            foreach (var action in BuildingSteps)
+            foreach (var action in BuildingSteps.Reverse())
             {
                 next = action.Invoke(next).Some();
             }
