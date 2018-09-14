@@ -2,7 +2,7 @@
 using Rethought.Commands.Actions;
 using Rethought.Extensions.Optional;
 
-namespace Rethought.Commands.Visitors
+namespace Rethought.Commands.Strategies
 {
     public class PrototypeStrategy<TContext> : IStrategy<TContext>
     {

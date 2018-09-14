@@ -1,7 +1,7 @@
 ﻿using Optional;
 using Rethought.Commands.Actions;
 
-namespace Rethought.Commands.Visitors
+namespace Rethought.Commands.Strategies
 {
     public interface IStrategy<TContext>
     {

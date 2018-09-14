@@ -5,7 +5,7 @@ using Rethought.Commands.Actions;
 using Rethought.Commands.Actions.Adapter;
 using Rethought.Extensions.Optional;
 
-namespace Rethought.Commands.Visitors
+namespace Rethought.Commands.Strategies
 {
     public class ActionStrategy<TContext> : IStrategy<TContext>
     {

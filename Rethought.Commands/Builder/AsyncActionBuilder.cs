@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Optional;
 using Rethought.Commands.Actions;
-using Rethought.Commands.Visitors;
+using Rethought.Commands.Strategies;
 using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Builder

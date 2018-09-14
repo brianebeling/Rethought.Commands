@@ -5,7 +5,7 @@ using Rethought.Commands.Builder;
 using Rethought.Commands.Parser;
 using Rethought.Extensions.Optional;
 
-namespace Rethought.Commands.Visitors
+namespace Rethought.Commands.Strategies
 {
     public class AdapterStrategy<TContext, TCommandSpecificContext> : IStrategy<TContext>
     {

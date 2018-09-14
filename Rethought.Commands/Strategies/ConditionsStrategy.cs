@@ -6,7 +6,7 @@ using Rethought.Commands.Actions.Conditions;
 using Rethought.Commands.Conditions;
 using Rethought.Extensions.Optional;
 
-namespace Rethought.Commands.Visitors
+namespace Rethought.Commands.Strategies
 {
     public class ConditionsStrategy<TContext> : IStrategy<TContext>
     {
