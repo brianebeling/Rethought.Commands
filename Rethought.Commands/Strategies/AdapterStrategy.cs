@@ -7,12 +7,12 @@ using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Visitors
 {
-    public class AdapterVisitor<TContext, TCommandSpecificContext> : IVisitor<TContext>
+    public class AdapterStrategy<TContext, TCommandSpecificContext> : IStrategy<TContext>
     {
         private readonly ITypeParser<TContext, TCommandSpecificContext> parser;
         private readonly Action<AsyncActionBuilder<TCommandSpecificContext>> configuration;
 
-        public AdapterVisitor(
+        public AdapterStrategy(
             ITypeParser<TContext, TCommandSpecificContext> parser,
             Action<AsyncActionBuilder<TCommandSpecificContext>> configuration)
         {

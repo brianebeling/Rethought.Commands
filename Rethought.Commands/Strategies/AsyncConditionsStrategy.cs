@@ -8,11 +8,11 @@ using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Visitors
 {
-    public class AsyncConditionsVisitor<TContext> : IVisitor<TContext>
+    public class AsyncConditionsStrategy<TContext> : IStrategy<TContext>
     {
         private readonly IEnumerable<IAsyncCondition<TContext>> asyncConditions;
 
-        public AsyncConditionsVisitor(IEnumerable<IAsyncCondition<TContext>> asyncConditions)
+        public AsyncConditionsStrategy(IEnumerable<IAsyncCondition<TContext>> asyncConditions)
         {
             this.asyncConditions = asyncConditions;
         }

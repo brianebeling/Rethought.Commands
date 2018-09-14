@@ -7,11 +7,11 @@ using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Visitors
 {
-    public class ActionVisitor<TContext> : IVisitor<TContext>
+    public class ActionStrategy<TContext> : IStrategy<TContext>
     {
         private readonly IAction<TContext> asyncAction;
 
-        public ActionVisitor(IAction<TContext> asyncAction)
+        public ActionStrategy(IAction<TContext> asyncAction)
         {
             this.asyncAction = asyncAction;
         }
@@ -24,12 +24,11 @@ namespace Rethought.Commands.Visitors
                 return Task.CompletedTask;
             }
 
-            var asyncActionSystemAdapter = FuncAdapter<TContext>.Create(Func);
+            var asyncActionSystemAdapter = FuncAdapter<TContext>.Create(Func);  
 
             if (nextAsyncActionOption.TryGetValue(out var nextAction))
             {
-                return EnumeratingAsyncAction<TContext>.Create(asyncActionSystemAdapter,
-                    nextAction);
+                return EnumeratingAsyncAction<TContext>.Create(asyncActionSystemAdapter, nextAction);
             }
 
             return asyncActionSystemAdapter;

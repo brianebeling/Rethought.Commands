@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Optional;
 using Rethought.Commands.Actions;
 using Rethought.Commands.Actions.Conditions;
@@ -7,13 +8,13 @@ using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Visitors
 {
-    public class AsyncConditionVisitor<TContext> : IVisitor<TContext>
+    public class ConditionsStrategy<TContext> : IStrategy<TContext>
     {
-        private readonly IAsyncCondition<TContext> asyncCondition;
+        private readonly IEnumerable<ICondition<TContext>> conditions;
 
-        public AsyncConditionVisitor(IAsyncCondition<TContext> asyncCondition)
+        public ConditionsStrategy(IEnumerable<ICondition<TContext>> conditions)
         {
-            this.asyncCondition = asyncCondition;
+            this.conditions = conditions;
         }
 
         public IAsyncAction<TContext> Invoke(Option<IAsyncAction<TContext>> nextAsyncActionOption)
@@ -23,7 +24,10 @@ namespace Rethought.Commands.Visitors
                 throw new ArgumentException($"There must be a succeeding {nameof(IAsyncAction<TContext>)}");
             }
 
-            return new AsyncConditionalAsyncAction<TContext>(asyncCondition, nextAsyncAction);
+            return
+                new ConditionalAsyncAction<TContext>(
+                    new AllOrFailureCondition<TContext>(conditions),
+                    nextAsyncAction);
         }
     }
 }

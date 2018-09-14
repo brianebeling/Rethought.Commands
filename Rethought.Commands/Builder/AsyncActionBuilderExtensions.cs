@@ -12,7 +12,7 @@ namespace Rethought.Commands.Builder
         public static AsyncActionBuilder<TContext> WithConditions<TContext>(
             this AsyncActionBuilder<TContext> asyncActionBuilder, IEnumerable<ICondition<TContext>> conditions)
         {
-            asyncActionBuilder.AddBuildingStep(new ConditionsVisitor<TContext>(conditions));
+            asyncActionBuilder.AddBuildingStep(new ConditionsStrategy<TContext>(conditions));
             return asyncActionBuilder;
         }
 
@@ -20,21 +20,21 @@ namespace Rethought.Commands.Builder
             this AsyncActionBuilder<TContext> asyncActionBuilder,
             IEnumerable<IAsyncCondition<TContext>> asyncConditions)
         {
-            asyncActionBuilder.AddBuildingStep(new AsyncConditionsVisitor<TContext>(asyncConditions));
+            asyncActionBuilder.AddBuildingStep(new AsyncConditionsStrategy<TContext>(asyncConditions));
             return asyncActionBuilder;
         }
 
         public static AsyncActionBuilder<TContext> WithCondition<TContext>(
             this AsyncActionBuilder<TContext> asyncActionBuilder, ICondition<TContext> condition)
         {
-            asyncActionBuilder.AddBuildingStep(new ConditionVisitor<TContext>(condition));
+            asyncActionBuilder.AddBuildingStep(new ConditionStrategy<TContext>(condition));
             return asyncActionBuilder;
         }
 
         public static AsyncActionBuilder<TContext> WithAsyncCondition<TContext>(
             this AsyncActionBuilder<TContext> asyncActionBuilder, IAsyncCondition<TContext> asyncCondition)
         {
-            asyncActionBuilder.AddBuildingStep(new AsyncConditionVisitor<TContext>(asyncCondition));
+            asyncActionBuilder.AddBuildingStep(new AsyncConditionStrategy<TContext>(asyncCondition));
             return asyncActionBuilder;
         }
 
@@ -44,7 +44,7 @@ namespace Rethought.Commands.Builder
             Action<AsyncActionBuilder<TCommandSpecificContext>> configuration)
         {
             asyncActionBuilder.AddBuildingStep(
-                new AsyncAdapterVisitor<TContext, TCommandSpecificContext>(asyncTypeParser, configuration));
+                new AsyncAdapterStrategy<TContext, TCommandSpecificContext>(asyncTypeParser, configuration));
             return asyncActionBuilder;
         }
 
@@ -54,14 +54,14 @@ namespace Rethought.Commands.Builder
             Action<AsyncActionBuilder<TCommandSpecificContext>> configuration)
         {
             asyncActionBuilder.AddBuildingStep(
-                new AdapterVisitor<TContext, TCommandSpecificContext>(typeParser, configuration));
+                new AdapterStrategy<TContext, TCommandSpecificContext>(typeParser, configuration));
             return asyncActionBuilder;
         }
 
         public static AsyncActionBuilder<TContext> WithAsyncAction<TContext>(
             this AsyncActionBuilder<TContext> asyncActionBuilder, IAsyncAction<TContext> asyncAction)
         {
-            asyncActionBuilder.AddBuildingStep(new AsyncActionVisitor<TContext>(asyncAction));
+            asyncActionBuilder.AddBuildingStep(new AsyncActionStrategy<TContext>(asyncAction));
 
             return asyncActionBuilder;
         }
@@ -69,7 +69,7 @@ namespace Rethought.Commands.Builder
         public static AsyncActionBuilder<TContext> WithAction<TContext>(
             this AsyncActionBuilder<TContext> asyncActionBuilder, IAction<TContext> asyncAction)
         {
-            asyncActionBuilder.AddBuildingStep(new ActionVisitor<TContext>(asyncAction));
+            asyncActionBuilder.AddBuildingStep(new ActionStrategy<TContext>(asyncAction));
 
             return asyncActionBuilder;
         }

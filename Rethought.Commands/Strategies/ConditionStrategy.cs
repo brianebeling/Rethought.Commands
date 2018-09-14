@@ -7,11 +7,11 @@ using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Visitors
 {
-    public class ConditionVisitor<TContext> : IVisitor<TContext>
+    public class ConditionStrategy<TContext> : IStrategy<TContext>
     {
         private readonly ICondition<TContext> condition;
 
-        public ConditionVisitor(ICondition<TContext> condition)
+        public ConditionStrategy(ICondition<TContext> condition)
         {
             this.condition = condition;
         }

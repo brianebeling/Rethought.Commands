@@ -10,24 +10,24 @@ namespace Rethought.Commands.Builder
 {
     public class AsyncActionBuilder<TContext>
     {
-        protected readonly IList<IVisitor<TContext>> BuildingSteps = new List<IVisitor<TContext>>();
+        protected readonly IList<IStrategy<TContext>> Strategies = new List<IStrategy<TContext>>();
 
-        public AsyncActionBuilder<TContext> AddBuildingStep(IVisitor<TContext> buildingStep)
+        public AsyncActionBuilder<TContext> AddStrategy(IStrategy<TContext> buildingStep)
         {
-            BuildingSteps.Add(buildingStep);
+            Strategies.Add(buildingStep);
 
             return this;
         }
 
         /// <summary>
-        ///     Sets a prototype. A prototype is inserted as the first visitor.
+        ///     Sets a prototype. A prototype is inserted as the first strategy.
         ///     Use this if you want to extend an existing <see cref="IAsyncAction{TContext}" />.
         /// </summary>
         /// <param name="asyncAction">The action asynchronous.</param>
         /// <returns></returns>
         public AsyncActionBuilder<TContext> WithPrototype(IAsyncAction<TContext> asyncAction)
         {
-            BuildingSteps.Insert(0, new PrototypeVisitor<TContext>(asyncAction));
+            Strategies.Insert(0, new PrototypeStrategy<TContext>(asyncAction));
 
             return this;
         }
@@ -36,14 +36,14 @@ namespace Rethought.Commands.Builder
         {
             Option<IAsyncAction<TContext>> next = default;
 
-            foreach (var action in BuildingSteps.Reverse())
+            foreach (var action in Strategies.Reverse())
             {
                 next = action.Invoke(next).Some();
             }
 
             if (!next.TryGetValue(out var value)) throw new InvalidOperationException("The configuration is invalid");
 
-            BuildingSteps.Clear();
+            Strategies.Clear();
 
             return value;
         }
