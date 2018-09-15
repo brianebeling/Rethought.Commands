@@ -15,24 +15,17 @@ namespace Rethought.Commands.Conditions
             this.asyncConditions = asyncConditions;
         }
 
-        public async Task<ConditionResult> SatisfiedAsync(TContext context)
+        public async Task<bool> SatisfiedAsync(TContext context)
         {
-            var reasons = new List<Reason>();
-            var stringBuilder = new StringBuilder();
-
             foreach (var asyncCondition in asyncConditions)
             {
-                var conditionResult = await asyncCondition.SatisfiedAsync(context);
-
-                if (!conditionResult.Satisfied && conditionResult.Reason.TryGetValue(out var reason))
-                    reasons.AddRange(reason);
+                if (!await asyncCondition.SatisfiedAsync(context).ConfigureAwait(false))
+                {
+                    return false;
+                }
             }
 
-            var value = stringBuilder.ToString();
-
-            return !string.IsNullOrWhiteSpace(value)
-                ? ConditionResult.FailWithReasons(new ReadOnlyCollection<Reason>(reasons))
-                : ConditionResult.Success;
+            return true;
         }
     }
 }

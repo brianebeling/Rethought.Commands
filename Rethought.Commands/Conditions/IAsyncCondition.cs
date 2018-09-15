@@ -4,6 +4,6 @@ namespace Rethought.Commands.Conditions
 {
     public interface IAsyncCondition<in TContext>
     {
-        Task<ConditionResult> SatisfiedAsync(TContext context);
+        Task<bool> SatisfiedAsync(TContext context);
     }
 }

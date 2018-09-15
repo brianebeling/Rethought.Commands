@@ -19,7 +19,7 @@ namespace Rethought.Commands.Actions.Conditions
 
         public async Task InvokeAsync(TContext context, CancellationToken cancellationToken)
         {
-            if ((await asyncPrecondition.SatisfiedAsync(context).ConfigureAwait(false)).Satisfied)
+            if (await asyncPrecondition.SatisfiedAsync(context))
             {
                 await success.InvokeAsync(context, cancellationToken).ConfigureAwait(false);
             }

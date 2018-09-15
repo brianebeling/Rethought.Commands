@@ -2,6 +2,6 @@
 {
     public interface ICondition<in TContext>
     {
-        ConditionResult Satisfied(TContext context);
+        bool Satisfied(TContext context);
     }
 }

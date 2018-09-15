@@ -22,7 +22,7 @@ namespace Rethought.Commands.Builder
         }
 
         public static AsyncActionBuilder<TContext> WithConditions<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder, IEnumerable<Func<TContext, ConditionResult>> conditions)
+            this AsyncActionBuilder<TContext> asyncActionBuilder, IEnumerable<Func<TContext, bool>> conditions)
         {
             asyncActionBuilder.AddStrategy(new ConditionsStrategy<TContext>(conditions.Select(FuncCondition<TContext>.Create)));
             return asyncActionBuilder;
@@ -38,7 +38,7 @@ namespace Rethought.Commands.Builder
 
         public static AsyncActionBuilder<TContext> WithAsyncConditions<TContext>(
             this AsyncActionBuilder<TContext> asyncActionBuilder,
-            IEnumerable<Func<TContext, Task<ConditionResult>>> asyncConditions)
+            IEnumerable<Func<TContext, Task<bool>>> asyncConditions)
         {
             asyncActionBuilder.AddStrategy(new AsyncConditionsStrategy<TContext>(asyncConditions.Select(AsyncFuncCondition<TContext>.Create)));
             return asyncActionBuilder;
@@ -52,7 +52,7 @@ namespace Rethought.Commands.Builder
         }
 
         public static AsyncActionBuilder<TContext> WithCondition<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder, Func<TContext, ConditionResult> condition)
+            this AsyncActionBuilder<TContext> asyncActionBuilder, Func<TContext, bool> condition)
         {
             asyncActionBuilder.AddStrategy(new ConditionStrategy<TContext>(FuncCondition<TContext>.Create(condition)));
             return asyncActionBuilder;
@@ -66,7 +66,7 @@ namespace Rethought.Commands.Builder
         }
 
         public static AsyncActionBuilder<TContext> WithAsyncCondition<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder, Func<TContext, Task<ConditionResult>> asyncCondition)
+            this AsyncActionBuilder<TContext> asyncActionBuilder, Func<TContext, Task<bool>> asyncCondition)
         {
             asyncActionBuilder.AddStrategy(new AsyncConditionStrategy<TContext>(AsyncFuncCondition<TContext>.Create(asyncCondition)));
             return asyncActionBuilder;
