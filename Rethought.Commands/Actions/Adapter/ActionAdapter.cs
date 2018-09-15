@@ -2,7 +2,7 @@
 
 namespace Rethought.Commands.Actions.Adapter
 {
-    public class ActionAdapter<TContext> : IAction<TContext>
+    public sealed class ActionAdapter<TContext> : IAction<TContext>
     {
         private readonly Action<TContext> action;
 

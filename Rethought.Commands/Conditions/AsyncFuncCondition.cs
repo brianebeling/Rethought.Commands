@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Rethought.Commands.Conditions
 {
-    public class AsyncFuncCondition<TContext> : IAsyncCondition<TContext>
+    public sealed class AsyncFuncCondition<TContext> : IAsyncCondition<TContext>
     {
         private readonly Func<TContext, Task<ConditionResult>> func;
 

@@ -2,7 +2,7 @@
 
 namespace Rethought.Commands.Conditions
 {
-    public class FuncCondition<TContext> : ICondition<TContext>
+    public sealed class FuncCondition<TContext> : ICondition<TContext>
     {
         private readonly Func<TContext, ConditionResult> func;
 

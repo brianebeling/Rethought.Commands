@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Optional;
 
 namespace Rethought.Commands.Parser
 {
-    public class FuncParser<TInput, TOutput> : ITypeParser<TInput, TOutput>
+    public sealed class FuncParser<TInput, TOutput> : ITypeParser<TInput, TOutput>
     {
         private readonly Func<TInput, Option<TOutput>> func;
 
-        public FuncParser(Func<TInput, Option<TOutput>> func)
+        private FuncParser(Func<TInput, Option<TOutput>> func)
         {
             this.func = func;
         }
@@ -17,6 +19,12 @@ namespace Rethought.Commands.Parser
         public Option<TOutput> Parse(TInput input)
         {
             return func.Invoke(input);
+        }
+
+        public static FuncParser<TInput, TOutput> Create(
+            Func<TInput, Option<TOutput>> func)
+        {
+            return new FuncParser<TInput, TOutput>(func);
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Rethought.Commands.Actions.Adapter
 {
-    public class FuncAdapter<TContext> : IAsyncAction<TContext>
+    public sealed class FuncAdapter<TContext> : IAsyncAction<TContext>
     {
         private readonly Func<TContext, CancellationToken, Task> func;
 
@@ -18,14 +18,24 @@ namespace Rethought.Commands.Actions.Adapter
             await func.Invoke(context, cancellationToken).ConfigureAwait(false);
         }
 
-        public static IAsyncAction<TContext> Create(Func<TContext, CancellationToken, Task> func)
+        public static FuncAdapter<TContext> Create(Func<TContext, CancellationToken, Task> func)
         {
             return new FuncAdapter<TContext>(func);
         }
 
-        public static IAsyncAction<TContext> Create(Func<TContext, Task> func)
+        public static FuncAdapter<TContext> Create(Func<TContext, Task> func)
         {
             return new FuncAdapter<TContext>((context, _) => func.Invoke(context));
         }
+
+        //public static implicit operator Func<TContext, CancellationToken, Task>(FuncAdapter<TContext> asyncAction)
+        //{
+        //    return asyncAction.InvokeAsync;
+        //}
+
+        //public static implicit operator FuncAdapter<TContext>(Func<TContext, CancellationToken, Task> func)
+        //{
+        //    return new FuncAdapter<TContext>(func);
+        //}
     }
 }

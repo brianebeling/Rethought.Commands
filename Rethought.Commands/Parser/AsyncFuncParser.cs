@@ -5,11 +5,11 @@ using Optional;
 
 namespace Rethought.Commands.Parser
 {
-    public class AsyncFuncParser<TInput, TOutput> : IAsyncTypeParser<TInput, TOutput>
+    public sealed class AsyncFuncParser<TInput, TOutput> : IAsyncTypeParser<TInput, TOutput>
     {
         private readonly Func<TInput, CancellationToken, Task<Option<TOutput>>> func;
 
-        public AsyncFuncParser(Func<TInput, CancellationToken, Task<Option<TOutput>>> func)
+        private AsyncFuncParser(Func<TInput, CancellationToken, Task<Option<TOutput>>> func)
         {
             this.func = func;
         }
@@ -17,6 +17,18 @@ namespace Rethought.Commands.Parser
         public Task<Option<TOutput>> ParseAsync(TInput input, CancellationToken cancellationToken)
         {
             return this.func.Invoke(input, cancellationToken);
+        }
+
+        public static AsyncFuncParser<TInput, TOutput> Create(
+            Func<TInput, CancellationToken, Task<Option<TOutput>>> func)
+        {
+            return new AsyncFuncParser<TInput, TOutput>(func);
+        }
+
+        public static AsyncFuncParser<TInput, TOutput> Create(
+            Func<TInput, Task<Option<TOutput>>> func)
+        {
+            return new AsyncFuncParser<TInput, TOutput>((input, _) => func.Invoke(input));
         }
     }
 }
