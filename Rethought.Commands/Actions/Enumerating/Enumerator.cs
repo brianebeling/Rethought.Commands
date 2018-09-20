@@ -13,14 +13,14 @@ namespace Rethought.Commands.Actions.Enumerating
             actionsAsyncs = actionAsyncsAsyncs;
         }
 
-        public async Task<ActionResult> InvokeAsync(TContext context, CancellationToken cancellationToken)
+        public async Task<bool> InvokeAsync(TContext context, CancellationToken cancellationToken)
         {
             foreach (var actionAsync in actionsAsyncs)
             {
                 await actionAsync.InvokeAsync(context, cancellationToken).ConfigureAwait(false);
             }
 
-            return ActionResult.Completed;
+            return true;
         }
 
         public static Enumerator<TContext> Create(params IAsyncAction<TContext>[] actionAsyncs)

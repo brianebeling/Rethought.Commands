@@ -13,19 +13,17 @@ namespace Rethought.Commands.Actions.Enumerating
             actionsAsyncs = actionAsyncsAsyncs;
         }
 
-        public async Task<ActionResult> InvokeAsync(TContext context, CancellationToken cancellationToken)
+        public async Task<bool> InvokeAsync(TContext context, CancellationToken cancellationToken)
         {
-            ActionResult finalActionResult = default;
+            var finalActionResult = true;
 
             foreach (var actionAsync in actionsAsyncs)
             {
                 var actionResult = await actionAsync.InvokeAsync(context, cancellationToken).ConfigureAwait(false);
 
-                if (actionResult.State == State.Failed && finalActionResult.State == State.Unknown)
-                    finalActionResult = actionResult;
+                if (!actionResult)
+                    finalActionResult = false;
             }
-
-            if (finalActionResult.State == State.Unknown) finalActionResult = ActionResult.Completed;
 
             return finalActionResult;
         }

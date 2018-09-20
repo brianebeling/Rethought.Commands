@@ -5,6 +5,6 @@ namespace Rethought.Commands.Actions
 {
     public interface IAsyncAction<in TContext>
     {
-        Task<ActionResult> InvokeAsync(TContext context, CancellationToken cancellationToken);
+        Task<bool> InvokeAsync(TContext context, CancellationToken cancellationToken);
     }
 }

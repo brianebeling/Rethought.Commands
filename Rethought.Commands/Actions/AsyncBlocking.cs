@@ -12,7 +12,7 @@ namespace Rethought.Commands.Actions
             this.action = action;
         }
 
-        public Task<ActionResult> InvokeAsync(TContext context, CancellationToken cancellationToken)
+        public Task<bool> InvokeAsync(TContext context, CancellationToken cancellationToken)
         {
             return Task.FromResult(action.Invoke(context));
         }

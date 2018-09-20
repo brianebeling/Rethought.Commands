@@ -13,16 +13,16 @@ namespace Rethought.Commands.Actions.Enumerating
             actionsAsyncs = actionAsyncsAsyncs;
         }
 
-        public async Task<ActionResult> InvokeAsync(TContext context, CancellationToken cancellationToken)
+        public async Task<bool> InvokeAsync(TContext context, CancellationToken cancellationToken)
         {
             foreach (var actionAsync in actionsAsyncs)
             {
                 var actionResult = await actionAsync.InvokeAsync(context, cancellationToken).ConfigureAwait(false);
 
-                if (actionResult.State == State.Completed) return actionResult;
+                if (actionResult) return true;
             }
 
-            return ActionResult.Failed;
+            return false;
         }
 
         public static AnyOrFailed<TContext> Create(params IAsyncAction<TContext>[] actionAsyncs)

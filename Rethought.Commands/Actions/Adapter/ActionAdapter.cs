@@ -11,10 +11,10 @@ namespace Rethought.Commands.Actions.Adapter
             this.action = action;
         }
 
-        public ActionResult Invoke(TContext context)
+        public bool Invoke(TContext context)
         {
             action.Invoke(context);
-            return ActionResult.Completed;
+            return true;
         }
 
         public static IAction<TContext> Create(Action<TContext> action)
