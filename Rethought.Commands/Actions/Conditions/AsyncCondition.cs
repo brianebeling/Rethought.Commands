@@ -4,12 +4,12 @@ using Rethought.Commands.Conditions;
 
 namespace Rethought.Commands.Actions.Conditions
 {
-    public class AsyncConditionalAsyncAction<TContext> : IAsyncAction<TContext>
+    public class AsyncCondition<TContext> : IAsyncAction<TContext>
     {
         private readonly IAsyncCondition<TContext> asyncPrecondition;
         private readonly IAsyncAction<TContext> success;
 
-        public AsyncConditionalAsyncAction(
+        public AsyncCondition(
             IAsyncCondition<TContext> asyncPrecondition,
             IAsyncAction<TContext> success)
         {
@@ -17,12 +17,14 @@ namespace Rethought.Commands.Actions.Conditions
             this.success = success;
         }
 
-        public async Task InvokeAsync(TContext context, CancellationToken cancellationToken)
+        public async Task<ActionResult> InvokeAsync(TContext context, CancellationToken cancellationToken)
         {
             if (await asyncPrecondition.SatisfiedAsync(context))
             {
-                await success.InvokeAsync(context, cancellationToken).ConfigureAwait(false);
+                return await success.InvokeAsync(context, cancellationToken).ConfigureAwait(false);
             }
+
+            return ActionResult.Failed;
         }
     }
 }

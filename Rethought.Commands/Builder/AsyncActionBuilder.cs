@@ -8,9 +8,9 @@ using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Builder
 {
-    public class AsyncActionBuilder<TContext>
+    public class AsyncActionBuilder<TContext> : IAsyncActionBuilder<TContext>
     {
-        protected readonly IList<IStrategy<TContext>> Strategies = new List<IStrategy<TContext>>();
+        protected internal readonly IList<IStrategy<TContext>> Strategies = new List<IStrategy<TContext>>();
 
         public AsyncActionBuilder<TContext> AddStrategy(IStrategy<TContext> buildingStep)
         {
@@ -19,20 +19,28 @@ namespace Rethought.Commands.Builder
             return this;
         }
 
-        /// <summary>
-        ///     Sets a prototype. A prototype is inserted as the first strategy.
-        ///     Use this if you want to extend an existing <see cref="IAsyncAction{TContext}" />.
-        /// </summary>
-        /// <param name="asyncAction">The action asynchronous.</param>
-        /// <returns></returns>
-        public AsyncActionBuilder<TContext> WithPrototype(IAsyncAction<TContext> asyncAction)
+        public AsyncActionBuilder<TContext> InsertStrategy(IStrategy<TContext> buildingStep, int index)
         {
-            Strategies.Insert(0, new PrototypeStrategy<TContext>(asyncAction));
+            Strategies.Insert(index, buildingStep);
 
             return this;
         }
 
-        public virtual IAsyncAction<TContext> Build()
+        public AsyncActionBuilder<TContext> RemoveStrategy(IStrategy<TContext> buildingStep)
+        {
+            Strategies.Remove(buildingStep);
+
+            return this;
+        }
+
+        public AsyncActionBuilder<TContext> RemoveStrategy(int index)
+        {
+            Strategies.RemoveAt(index);
+
+            return this;
+        }
+
+        public IAsyncAction<TContext> Build()
         {
             Option<IAsyncAction<TContext>> next = default;
 

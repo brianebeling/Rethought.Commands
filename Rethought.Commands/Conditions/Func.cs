@@ -2,11 +2,11 @@
 
 namespace Rethought.Commands.Conditions
 {
-    public sealed class FuncCondition<TContext> : ICondition<TContext>
+    public sealed class Func<TContext> : ICondition<TContext>
     {
         private readonly Func<TContext, bool> func;
 
-        private FuncCondition(Func<TContext, bool> func)
+        private Func(Func<TContext, bool> func)
         {
             this.func = func;
         }
@@ -16,9 +16,9 @@ namespace Rethought.Commands.Conditions
             return func.Invoke(context);
         }
 
-        public static FuncCondition<TContext> Create(Func<TContext, bool> func)
+        public static Func<TContext> Create(Func<TContext, bool> func)
         {
-            return new FuncCondition<TContext>(func);
+            return new Func<TContext>(func);
         }
     }
 }

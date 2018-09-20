@@ -1,16 +1,13 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Conditions
 {
-    public class AllOrFailureCondition<TContext> : ICondition<TContext>
+    public class AllOrFailed<TContext> : ICondition<TContext>
     {
         private readonly IEnumerable<ICondition<TContext>> conditions;
 
-        public AllOrFailureCondition(IEnumerable<ICondition<TContext>> conditions)
+        public AllOrFailed(IEnumerable<ICondition<TContext>> conditions)
         {
             this.conditions = conditions;
         }

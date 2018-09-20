@@ -1,16 +1,13 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text;
 using System.Threading.Tasks;
-using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Conditions
 {
-    public class AsyncAllOrFailureCondition<TContext> : IAsyncCondition<TContext>
+    public class AsyncAllOrFailed<TContext> : IAsyncCondition<TContext>
     {
         private readonly IEnumerable<IAsyncCondition<TContext>> asyncConditions;
 
-        public AsyncAllOrFailureCondition(IEnumerable<IAsyncCondition<TContext>> asyncConditions)
+        public AsyncAllOrFailed(IEnumerable<IAsyncCondition<TContext>> asyncConditions)
         {
             this.asyncConditions = asyncConditions;
         }

@@ -4,11 +4,11 @@ using Rethought.Commands.Actions;
 
 namespace Rethought.Commands.Strategies
 {
-    public class FunctionalStrategy<TContext> : IStrategy<TContext>
+    public class Func<TContext> : IStrategy<TContext>
     {
         private readonly Func<Option<IAsyncAction<TContext>>, IAsyncAction<TContext>> func;
 
-        public FunctionalStrategy(Func<Option<IAsyncAction<TContext>>, IAsyncAction<TContext>> func)
+        public Func(Func<Option<IAsyncAction<TContext>>, IAsyncAction<TContext>> func)
         {
             this.func = func;
         }

@@ -1,5 +1,4 @@
-﻿using System;
-using Optional;
+﻿using Optional;
 using Rethought.Commands.Actions;
 using Rethought.Commands.Builder;
 using Rethought.Commands.Parser;
@@ -7,16 +6,16 @@ using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Strategies
 {
-    public class AsyncAdapterStrategy<TContext, TCommandSpecificContext> : IStrategy<TContext>
+    public class Adapter<TContext, TCommandSpecificContext> : IStrategy<TContext>
     {
-        private readonly IAsyncTypeParser<TContext, TCommandSpecificContext> asyncParser;
-        private readonly Action<AsyncActionBuilder<TCommandSpecificContext>> configuration;
+        private readonly System.Action<AsyncActionBuilder<TCommandSpecificContext>> configuration;
+        private readonly ITypeParser<TContext, TCommandSpecificContext> parser;
 
-        public AsyncAdapterStrategy(
-            IAsyncTypeParser<TContext, TCommandSpecificContext> asyncParser,
-            Action<AsyncActionBuilder<TCommandSpecificContext>> configuration)
+        public Adapter(
+            ITypeParser<TContext, TCommandSpecificContext> parser,
+            System.Action<AsyncActionBuilder<TCommandSpecificContext>> configuration)
         {
-            this.asyncParser = asyncParser;
+            this.parser = parser;
             this.configuration = configuration;
         }
 
@@ -28,11 +27,11 @@ namespace Rethought.Commands.Strategies
             var command = asyncActionBuilder.Build();
 
             var asyncContextSwitchDecorator =
-                new AsyncContextAdapterAsyncActionDecorator<TContext, TCommandSpecificContext>(asyncParser, command);
+                new ContextAdapter<TContext, TCommandSpecificContext>(parser, command);
 
             if (nextAsyncActionOption.TryGetValue(out var nextAsyncAction))
             {
-                return EnumeratingAsyncAction<TContext>.Create(asyncContextSwitchDecorator, nextAsyncAction);
+                return Actions.Enumerating.Enumerator<TContext>.Create(asyncContextSwitchDecorator, nextAsyncAction);
             }
 
             return asyncContextSwitchDecorator;

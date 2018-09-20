@@ -5,12 +5,12 @@ using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Actions
 {
-    public class ContextAdapterAsyncActionDecorator<TIncomingContext, TOutgoingContext> : IAsyncAction<TIncomingContext>
+    public class ContextAdapter<TIncomingContext, TOutgoingContext> : IAsyncAction<TIncomingContext>
     {
-        private readonly ITypeParser<TIncomingContext, TOutgoingContext> parser;
         private readonly IAsyncAction<TOutgoingContext> command;
+        private readonly ITypeParser<TIncomingContext, TOutgoingContext> parser;
 
-        public ContextAdapterAsyncActionDecorator(
+        public ContextAdapter(
             ITypeParser<TIncomingContext, TOutgoingContext> parser,
             IAsyncAction<TOutgoingContext> command)
         {
@@ -18,14 +18,16 @@ namespace Rethought.Commands.Actions
             this.command = command;
         }
 
-        public async Task InvokeAsync(TIncomingContext context, CancellationToken cancellationToken)
+        public async Task<ActionResult> InvokeAsync(TIncomingContext context, CancellationToken cancellationToken)
         {
             var newContext = parser.Parse(context);
 
             if (newContext.TryGetValue(out var value))
             {
-                await command.InvokeAsync(value, cancellationToken).ConfigureAwait(false);
+                return await command.InvokeAsync(value, cancellationToken).ConfigureAwait(false);
             }
+
+            return ActionResult.Failed;
         }
     }
 }

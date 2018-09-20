@@ -2,19 +2,18 @@
 using System.Collections.Generic;
 using Optional;
 using Rethought.Commands.Actions;
-using Rethought.Commands.Actions.Conditions;
 using Rethought.Commands.Conditions;
 using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Strategies
 {
-    public class ConditionsStrategy<TContext> : IStrategy<TContext>
+    public class AsyncConditions<TContext> : IStrategy<TContext>
     {
-        private readonly IEnumerable<ICondition<TContext>> conditions;
+        private readonly IEnumerable<IAsyncCondition<TContext>> asyncConditions;
 
-        public ConditionsStrategy(IEnumerable<ICondition<TContext>> conditions)
+        public AsyncConditions(IEnumerable<IAsyncCondition<TContext>> asyncConditions)
         {
-            this.conditions = conditions;
+            this.asyncConditions = asyncConditions;
         }
 
         public IAsyncAction<TContext> Invoke(Option<IAsyncAction<TContext>> nextAsyncActionOption)
@@ -25,8 +24,8 @@ namespace Rethought.Commands.Strategies
             }
 
             return
-                new ConditionalAsyncAction<TContext>(
-                    new AllOrFailureCondition<TContext>(conditions),
+                new Actions.Conditions.AsyncCondition<TContext>(
+                    new AsyncAllOrFailed<TContext>(asyncConditions),
                     nextAsyncAction);
         }
     }

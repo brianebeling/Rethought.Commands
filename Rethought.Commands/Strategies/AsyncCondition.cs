@@ -1,19 +1,18 @@
 ﻿using System;
 using Optional;
 using Rethought.Commands.Actions;
-using Rethought.Commands.Actions.Conditions;
 using Rethought.Commands.Conditions;
 using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Strategies
 {
-    public class ConditionStrategy<TContext> : IStrategy<TContext>
+    public class AsyncCondition<TContext> : IStrategy<TContext>
     {
-        private readonly ICondition<TContext> condition;
+        private readonly IAsyncCondition<TContext> asyncCondition;
 
-        public ConditionStrategy(ICondition<TContext> condition)
+        public AsyncCondition(IAsyncCondition<TContext> asyncCondition)
         {
-            this.condition = condition;
+            this.asyncCondition = asyncCondition;
         }
 
         public IAsyncAction<TContext> Invoke(Option<IAsyncAction<TContext>> nextAsyncActionOption)
@@ -23,7 +22,7 @@ namespace Rethought.Commands.Strategies
                 throw new ArgumentException($"There must be a succeeding {nameof(IAsyncAction<TContext>)}");
             }
 
-            return new ConditionalAsyncAction<TContext>(condition, nextAsyncAction);
+            return new Actions.Conditions.AsyncCondition<TContext>(asyncCondition, nextAsyncAction);
         }
     }
 }
