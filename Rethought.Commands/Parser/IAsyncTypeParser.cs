@@ -6,6 +6,6 @@ namespace Rethought.Commands.Parser
 {
     public interface IAsyncTypeParser<in TInput, TOutput>
     {
-        Task<Option<TOutput>> ParseAsync(TInput input, CancellationToken cancellationToken);
+        Task<Option<TOutput, bool>> ParseAsync(TInput input, CancellationToken cancellationToken);
     }
 }

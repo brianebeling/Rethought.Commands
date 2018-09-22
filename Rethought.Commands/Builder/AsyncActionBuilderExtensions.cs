@@ -88,7 +88,7 @@ namespace Rethought.Commands.Builder
 
         public static AsyncActionBuilder<TContext> WithAdapter<TContext, TCommandSpecificContext>(
             this AsyncActionBuilder<TContext> asyncActionBuilder,
-            Func<TContext, CancellationToken, Task<Option<TCommandSpecificContext>>> asyncTypeParser,
+            Func<TContext, CancellationToken, Task<Option<TCommandSpecificContext, bool>>> asyncTypeParser,
             System.Action<AsyncActionBuilder<TCommandSpecificContext>> configuration)
         {
             asyncActionBuilder.AddStrategy(
@@ -99,7 +99,7 @@ namespace Rethought.Commands.Builder
 
         public static AsyncActionBuilder<TContext> WithAdapter<TContext, TCommandSpecificContext>(
             this AsyncActionBuilder<TContext> asyncActionBuilder,
-            System.Func<TContext, Task<Option<TCommandSpecificContext>>> asyncTypeParser,
+            System.Func<TContext, Task<Option<TCommandSpecificContext, bool>>> asyncTypeParser,
             System.Action<AsyncActionBuilder<TCommandSpecificContext>> configuration)
         {
             asyncActionBuilder.AddStrategy(
