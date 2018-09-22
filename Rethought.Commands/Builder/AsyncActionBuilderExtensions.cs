@@ -138,17 +138,17 @@ namespace Rethought.Commands.Builder
         }
 
         public static AsyncActionBuilder<TContext> WithAsyncAction<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder, Func<TContext, CancellationToken, Task> func)
+            this AsyncActionBuilder<TContext> asyncActionBuilder, Func<TContext, CancellationToken, Task<Result>> asyncFunc)
         {
-            asyncActionBuilder.AddStrategy(new AsyncAction<TContext>(FuncAdapter<TContext>.Create(func)));
+            asyncActionBuilder.AddStrategy(new AsyncAction<TContext>(AsyncFuncAdapter<TContext>.Create(asyncFunc)));
 
             return asyncActionBuilder;
         }
 
         public static AsyncActionBuilder<TContext> WithAsyncAction<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder, System.Func<TContext, Task> func)
+            this AsyncActionBuilder<TContext> asyncActionBuilder, System.Func<TContext, Task<Result>> asyncFunc)
         {
-            asyncActionBuilder.AddStrategy(new AsyncAction<TContext>(FuncAdapter<TContext>.Create(func)));
+            asyncActionBuilder.AddStrategy(new AsyncAction<TContext>(AsyncFuncAdapter<TContext>.Create(asyncFunc)));
 
             return asyncActionBuilder;
         }
@@ -160,6 +160,16 @@ namespace Rethought.Commands.Builder
 
             return asyncActionBuilder;
         }
+
+        public static AsyncActionBuilder<TContext> WithAction<TContext>(
+            this AsyncActionBuilder<TContext> asyncActionBuilder,
+            System.Func<TContext, Result> func)
+        {
+            asyncActionBuilder.AddStrategy(new Strategies.Action<TContext>(FuncAdapter<TContext>.Create(func)));
+
+            return asyncActionBuilder;
+        }
+
 
         public static AsyncActionBuilder<TContext> WithEnumerating<TContext>(
             this AsyncActionBuilder<TContext> asyncActionBuilder, IEnumerable<IAsyncAction<TContext>> asyncActions,
@@ -193,7 +203,7 @@ namespace Rethought.Commands.Builder
             IEnumerable<System.Action<AsyncActionBuilder<TContext>>> configuration)
         {
             asyncActionBuilder.AddStrategy(new AsyncActionBuilders<TContext>(configuration,
-                new AnyOrFailedFactory<TContext>()));
+                new AnyOrNoneFactory<TContext>()));
 
             return asyncActionBuilder;
         }
@@ -203,7 +213,7 @@ namespace Rethought.Commands.Builder
             IEnumerable<System.Func<IAsyncAction<TContext>>> asyncActions)
         {
             asyncActionBuilder.AddStrategy(new LazyEnumerator<TContext>(asyncActions,
-                new AnyOrFailedFactory<TContext>()));
+                new AnyOrNoneFactory<TContext>()));
 
             return asyncActionBuilder;
         }
@@ -212,7 +222,7 @@ namespace Rethought.Commands.Builder
             this AsyncActionBuilder<TContext> asyncActionBuilder, IEnumerable<IAsyncAction<TContext>> asyncActions)
         {
             asyncActionBuilder.AddStrategy(new Strategies.Enumerator<TContext>(asyncActions,
-                new AnyOrFailedFactory<TContext>()));
+                new AnyOrNoneFactory<TContext>()));
 
             return asyncActionBuilder;
         }
@@ -224,9 +234,9 @@ namespace Rethought.Commands.Builder
             IFactory<TContext> factory;
 
             if (shortCircuiting)
-                factory = new AllOrFailedFactory<TContext>();
+                factory = new AllOrAbortedFactory<TContext>();
             else
-                factory = new PersistingAllOrFailedFactory<TContext>();
+                factory = new PersistingAllOrAbortedFactory<TContext>();
 
             asyncActionBuilder.AddStrategy(new AsyncActionBuilders<TContext>(configuration, factory));
 
@@ -255,9 +265,9 @@ namespace Rethought.Commands.Builder
             IFactory<TContext> factory;
 
             if (shortCircuiting)
-                factory = new AllOrFailedFactory<TContext>();
+                factory = new AllOrAbortedFactory<TContext>();
             else
-                factory = new PersistingAllOrFailedFactory<TContext>();
+                factory = new PersistingAllOrAbortedFactory<TContext>();
 
             asyncActionBuilder.AddStrategy(new LazyEnumerator<TContext>(asyncActions, factory));
 
@@ -271,9 +281,9 @@ namespace Rethought.Commands.Builder
             IFactory<TContext> factory;
 
             if (shortCircuiting)
-                factory = new AllOrFailedFactory<TContext>();
+                factory = new AllOrAbortedFactory<TContext>();
             else
-                factory = new PersistingAllOrFailedFactory<TContext>();
+                factory = new PersistingAllOrAbortedFactory<TContext>();
 
             asyncActionBuilder.AddStrategy(new Strategies.Enumerator<TContext>(asyncActions, factory));
 

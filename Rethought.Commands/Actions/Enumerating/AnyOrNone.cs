@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 
 namespace Rethought.Commands.Actions.Enumerating
 {
-    public sealed class AllOrFailed<TContext> : IAsyncAction<TContext>
+    public sealed class AnyOrNone<TContext> : IAsyncAction<TContext>
     {
         private readonly IEnumerable<IAsyncAction<TContext>> actionsAsyncs;
 
-        private AllOrFailed(IEnumerable<IAsyncAction<TContext>> actionAsyncsAsyncs)
+        private AnyOrNone(IEnumerable<IAsyncAction<TContext>> actionAsyncsAsyncs)
         {
             actionsAsyncs = actionAsyncsAsyncs;
         }
@@ -19,21 +19,21 @@ namespace Rethought.Commands.Actions.Enumerating
             {
                 var actionResult = await actionAsync.InvokeAsync(context, cancellationToken).ConfigureAwait(false);
 
-                if (actionResult == Result.Aborted) return actionResult;
+                if (actionResult == Result.Completed || actionResult == Result.Aborted) return actionResult;
             }
 
-            return Result.Completed;
+            return Result.None;
         }
 
-        public static AllOrFailed<TContext> Create(params IAsyncAction<TContext>[] actionAsyncs)
+        public static AnyOrNone<TContext> Create(params IAsyncAction<TContext>[] actionAsyncs)
         {
-            return new AllOrFailed<TContext>(actionAsyncs);
+            return new AnyOrNone<TContext>(actionAsyncs);
         }
 
-        public static AllOrFailed<TContext> Create(
+        public static AnyOrNone<TContext> Create(
             IEnumerable<IAsyncAction<TContext>> actionAsyncs)
         {
-            return new AllOrFailed<TContext>(actionAsyncs);
+            return new AnyOrNone<TContext>(actionAsyncs);
         }
     }
 }

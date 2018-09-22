@@ -2,11 +2,11 @@
 
 namespace Rethought.Commands.Actions.Enumerating
 {
-    public sealed class AllOrFailedFactory<TContext> : IFactory<TContext>
+    public sealed class PersistingAllOrAbortedFactory<TContext> : IFactory<TContext>
     {
         public IAsyncAction<TContext> Create(IEnumerable<IAsyncAction<TContext>> asyncActions)
         {
-            return AllOrFailed<TContext>.Create(asyncActions);
+            return PersistingAllOrAborted<TContext>.Create(asyncActions);
         }
     }
 }

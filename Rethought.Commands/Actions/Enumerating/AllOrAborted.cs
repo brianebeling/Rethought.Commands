@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 
 namespace Rethought.Commands.Actions.Enumerating
 {
-    public sealed class AnyOrFailed<TContext> : IAsyncAction<TContext>
+    public sealed class AllOrAborted<TContext> : IAsyncAction<TContext>
     {
         private readonly IEnumerable<IAsyncAction<TContext>> actionsAsyncs;
 
-        private AnyOrFailed(IEnumerable<IAsyncAction<TContext>> actionAsyncsAsyncs)
+        private AllOrAborted(IEnumerable<IAsyncAction<TContext>> actionAsyncsAsyncs)
         {
             actionsAsyncs = actionAsyncsAsyncs;
         }
@@ -19,21 +19,21 @@ namespace Rethought.Commands.Actions.Enumerating
             {
                 var actionResult = await actionAsync.InvokeAsync(context, cancellationToken).ConfigureAwait(false);
 
-                if (actionResult == Result.Completed) return actionResult;
+                if (actionResult == Result.Aborted) return actionResult;
             }
 
-            return Result.Aborted;
+            return Result.Completed;
         }
 
-        public static AnyOrFailed<TContext> Create(params IAsyncAction<TContext>[] actionAsyncs)
+        public static AllOrAborted<TContext> Create(params IAsyncAction<TContext>[] actionAsyncs)
         {
-            return new AnyOrFailed<TContext>(actionAsyncs);
+            return new AllOrAborted<TContext>(actionAsyncs);
         }
 
-        public static AnyOrFailed<TContext> Create(
+        public static AllOrAborted<TContext> Create(
             IEnumerable<IAsyncAction<TContext>> actionAsyncs)
         {
-            return new AnyOrFailed<TContext>(actionAsyncs);
+            return new AllOrAborted<TContext>(actionAsyncs);
         }
     }
 }

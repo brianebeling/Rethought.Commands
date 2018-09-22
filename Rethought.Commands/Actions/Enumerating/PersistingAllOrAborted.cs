@@ -4,18 +4,18 @@ using System.Threading.Tasks;
 
 namespace Rethought.Commands.Actions.Enumerating
 {
-    public sealed class PersistingAllOrFailed<TContext> : IAsyncAction<TContext>
+    public sealed class PersistingAllOrAborted<TContext> : IAsyncAction<TContext>
     {
         private readonly IEnumerable<IAsyncAction<TContext>> actionsAsyncs;
 
-        private PersistingAllOrFailed(IEnumerable<IAsyncAction<TContext>> actionAsyncsAsyncs)
+        private PersistingAllOrAborted(IEnumerable<IAsyncAction<TContext>> actionAsyncsAsyncs)
         {
             actionsAsyncs = actionAsyncsAsyncs;
         }
 
         public async Task<Result> InvokeAsync(TContext context, CancellationToken cancellationToken)
         {
-            var finalActionResult = Result.Aborted;
+            var finalActionResult = Result.Completed;
 
             foreach (var actionAsync in actionsAsyncs)
             {
@@ -28,16 +28,16 @@ namespace Rethought.Commands.Actions.Enumerating
             return finalActionResult;
         }
 
-        public static PersistingAllOrFailed<TContext> Create(
+        public static PersistingAllOrAborted<TContext> Create(
             params IAsyncAction<TContext>[] actionAsyncs)
         {
-            return new PersistingAllOrFailed<TContext>(actionAsyncs);
+            return new PersistingAllOrAborted<TContext>(actionAsyncs);
         }
 
-        public static PersistingAllOrFailed<TContext> Create(
+        public static PersistingAllOrAborted<TContext> Create(
             IEnumerable<IAsyncAction<TContext>> actionAsyncs)
         {
-            return new PersistingAllOrFailed<TContext>(actionAsyncs);
+            return new PersistingAllOrAborted<TContext>(actionAsyncs);
         }
     }
 }
