@@ -18,7 +18,7 @@ namespace Rethought.Commands.Actions
             this.command = command;
         }
 
-        public async Task<bool> InvokeAsync(TIncomingContext context, CancellationToken cancellationToken)
+        public async Task<Result> InvokeAsync(TIncomingContext context, CancellationToken cancellationToken)
         {
             var newContext = await asyncParser.ParseAsync(context, cancellationToken).ConfigureAwait(false);
 
@@ -27,7 +27,7 @@ namespace Rethought.Commands.Actions
                 return await command.InvokeAsync(value, cancellationToken).ConfigureAwait(false);
             }
 
-            return false;
+            return Result.None;
         }
     }
 }

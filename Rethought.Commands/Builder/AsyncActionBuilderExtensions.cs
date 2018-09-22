@@ -161,14 +161,6 @@ namespace Rethought.Commands.Builder
             return asyncActionBuilder;
         }
 
-        public static AsyncActionBuilder<TContext> WithAction<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder, System.Action<TContext> action)
-        {
-            asyncActionBuilder.AddStrategy(new Strategies.Action<TContext>(ActionAdapter<TContext>.Create(action)));
-
-            return asyncActionBuilder;
-        }
-
         public static AsyncActionBuilder<TContext> WithEnumerating<TContext>(
             this AsyncActionBuilder<TContext> asyncActionBuilder, IEnumerable<IAsyncAction<TContext>> asyncActions,
             IFactory<TContext> factory)

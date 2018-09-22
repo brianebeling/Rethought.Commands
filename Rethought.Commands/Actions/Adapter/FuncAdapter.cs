@@ -6,34 +6,34 @@ namespace Rethought.Commands.Actions.Adapter
 {
     public sealed class FuncAdapter<TContext> : IAsyncAction<TContext>
     {
-        private readonly Func<TContext, CancellationToken, Task<bool>> func;
+        private readonly Func<TContext, CancellationToken, Task<Result>> func;
 
-        private FuncAdapter(Func<TContext, CancellationToken, Task<bool>> func)
+        private FuncAdapter(Func<TContext, CancellationToken, Task<Result>> func)
         {
             this.func = func;
         }
 
-        public async Task<bool> InvokeAsync(TContext context, CancellationToken cancellationToken)
+        public async Task<Result> InvokeAsync(TContext context, CancellationToken cancellationToken)
         {
             return await func.Invoke(context, cancellationToken).ConfigureAwait(false);
         }
 
-        public static FuncAdapter<TContext> Create(Func<TContext, CancellationToken, Task<bool>> func)
+        public static FuncAdapter<TContext> Create(Func<TContext, CancellationToken, Task<Result>> func)
         {
             return new FuncAdapter<TContext>(func);
         }
 
-        public static FuncAdapter<TContext> Create(Func<TContext, Task<bool>> func)
+        public static FuncAdapter<TContext> Create(Func<TContext, Task<Result>> func)
         {
             return new FuncAdapter<TContext>((context, _) => func.Invoke(context));
         }
 
         public static FuncAdapter<TContext> Create(Func<TContext, CancellationToken, Task> func)
         {
-            async Task<bool> Func(TContext context, CancellationToken token)
+            async Task<Result> Func(TContext context, CancellationToken token)
             {
                 await func.Invoke(context, token);
-                return true;
+                return Result.Completed;
             }
 
             return new FuncAdapter<TContext>(Func);
@@ -41,10 +41,10 @@ namespace Rethought.Commands.Actions.Adapter
 
         public static FuncAdapter<TContext> Create(Func<TContext, Task> func)
         {
-            async Task<bool> Func(TContext context, CancellationToken _)
+            async Task<Result> Func(TContext context, CancellationToken _)
             {
                 await func.Invoke(context);
-                return true;
+                return Result.Completed;
             }
 
             return new FuncAdapter<TContext>(Func);

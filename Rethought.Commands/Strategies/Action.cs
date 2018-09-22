@@ -20,7 +20,7 @@ namespace Rethought.Commands.Strategies
         {
             var asyncAction = action.ToAsyncBackground();
 
-            async Task<bool> Func(TContext context, CancellationToken cancellationToken)
+            async Task<Result> Func(TContext context, CancellationToken cancellationToken)
             {
                 return await asyncAction.InvokeAsync(context, cancellationToken);
             }

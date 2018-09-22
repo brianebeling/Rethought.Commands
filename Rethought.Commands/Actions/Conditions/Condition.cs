@@ -15,14 +15,14 @@ namespace Rethought.Commands.Actions.Conditions
             this.success = success;
         }
 
-        public async Task<bool> InvokeAsync(TContext context, CancellationToken cancellationToken)
+        public async Task<Result> InvokeAsync(TContext context, CancellationToken cancellationToken)
         {
             if (precondition.Satisfied(context))
             {
                 return await success.InvokeAsync(context, cancellationToken);
             }
 
-            return false;
+            return Result.None;
         }
     }
 }
