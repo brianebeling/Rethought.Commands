@@ -120,7 +120,7 @@ namespace Rethought.Commands.Builder
 
         public static AsyncActionBuilder<TContext> WithAdapter<TContext, TCommandSpecificContext>(
             this AsyncActionBuilder<TContext> asyncActionBuilder,
-            System.Func<TContext, Option<TCommandSpecificContext>> typeParser,
+            System.Func<TContext, Option<TCommandSpecificContext, bool>> typeParser,
             System.Action<AsyncActionBuilder<TCommandSpecificContext>> configuration)
         {
             asyncActionBuilder.AddStrategy(
@@ -193,7 +193,7 @@ namespace Rethought.Commands.Builder
             this AsyncActionBuilder<TContext> asyncActionBuilder,
             IEnumerable<System.Action<AsyncActionBuilder<TContext>>> configuration, IFactory<TContext> factory)
         {
-            asyncActionBuilder.AddStrategy(new AsyncActionBuilders<TContext>(configuration, factory));
+            asyncActionBuilder.AddStrategy(new BuildAsyncActionBuilders<TContext>(configuration, factory));
 
             return asyncActionBuilder;
         }
@@ -202,7 +202,7 @@ namespace Rethought.Commands.Builder
             this AsyncActionBuilder<TContext> asyncActionBuilder,
             IEnumerable<System.Action<AsyncActionBuilder<TContext>>> configuration)
         {
-            asyncActionBuilder.AddStrategy(new AsyncActionBuilders<TContext>(configuration,
+            asyncActionBuilder.AddStrategy(new BuildAsyncActionBuilders<TContext>(configuration,
                 new AnyOrNoneFactory<TContext>()));
 
             return asyncActionBuilder;
@@ -238,7 +238,7 @@ namespace Rethought.Commands.Builder
             else
                 factory = new PersistingAllOrAbortedFactory<TContext>();
 
-            asyncActionBuilder.AddStrategy(new AsyncActionBuilders<TContext>(configuration, factory));
+            asyncActionBuilder.AddStrategy(new BuildAsyncActionBuilders<TContext>(configuration, factory));
 
             return asyncActionBuilder;
         }

@@ -7,12 +7,12 @@ using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Strategies
 {
-    public class AsyncActionBuilders<TContext> : IStrategy<TContext>
+    public class BuildAsyncActionBuilders<TContext> : IStrategy<TContext>
     {
         private readonly IEnumerable<System.Action<AsyncActionBuilder<TContext>>> asyncActionBuilderActions;
         private readonly IFactory<TContext> factory;
 
-        public AsyncActionBuilders(
+        public BuildAsyncActionBuilders(
             IEnumerable<System.Action<AsyncActionBuilder<TContext>>> asyncActionBuilderActions,
             IFactory<TContext> factory)
         {
