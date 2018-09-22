@@ -25,7 +25,7 @@ namespace Rethought.Commands.Strategies
                 return await asyncAction.InvokeAsync(context, cancellationToken);
             }
 
-            var asyncActionSystemAdapter = FuncAdapter<TContext>.Create(Func);
+            var asyncActionSystemAdapter = AsyncFuncAdapter<TContext>.Create(Func);
 
             if (nextAsyncActionOption.TryGetValue(out var nextAction))
             {
