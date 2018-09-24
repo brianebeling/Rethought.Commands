@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Rethought.Commands.Parser;
+using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Actions
 {
@@ -19,18 +20,17 @@ namespace Rethought.Commands.Actions
 
         public async Task<Result> InvokeAsync(TIncomingContext context, CancellationToken cancellationToken)
         {
-            var newContext = parser.Parse(context);
-
-            if (newContext.HasValue)
+            if (parser.Parse(context).TryGetValue(out var option))
             {
-                return await command.InvokeAsync(newContext.ValueOr(default(TOutgoingContext)), cancellationToken);
+                if (option.TryGetValue(out var value))
+                {
+                    return await command.InvokeAsync(value, cancellationToken);
+                }
+
+                return Result.None;
             }
 
-            // This is dirty, but the only way to get the exception value of Option without modifying the source code or using reflection
-            bool exception = default;
-            newContext.Match(x => { }, b => exception = b);
-
-            return exception ? Result.Aborted : Result.None;
+            return Result.Aborted;
         }
     }
 }

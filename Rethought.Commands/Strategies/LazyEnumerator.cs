@@ -12,7 +12,8 @@ namespace Rethought.Commands.Strategies
         private readonly IEnumerable<System.Func<IAsyncAction<TContext>>> asyncActions;
         private readonly IFactory<TContext> factory;
 
-        public LazyEnumerator(IEnumerable<System.Func<IAsyncAction<TContext>>> asyncActions,
+        public LazyEnumerator(
+            IEnumerable<System.Func<IAsyncAction<TContext>>> asyncActions,
             IFactory<TContext> factory)
         {
             this.asyncActions = asyncActions;

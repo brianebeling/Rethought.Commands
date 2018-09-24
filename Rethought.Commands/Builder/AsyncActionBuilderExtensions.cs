@@ -16,14 +16,16 @@ namespace Rethought.Commands.Builder
     public static class AsyncActionBuilderExtensions
     {
         public static AsyncActionBuilder<TContext> WithConditions<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder, IEnumerable<ICondition<TContext>> conditions)
+            this AsyncActionBuilder<TContext> asyncActionBuilder,
+            IEnumerable<ICondition<TContext>> conditions)
         {
             asyncActionBuilder.AddStrategy(new Conditions<TContext>(conditions));
             return asyncActionBuilder;
         }
 
         public static AsyncActionBuilder<TContext> WithConditions<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder, IEnumerable<System.Func<TContext, bool>> conditions)
+            this AsyncActionBuilder<TContext> asyncActionBuilder,
+            IEnumerable<System.Func<TContext, bool>> conditions)
         {
             asyncActionBuilder.AddStrategy(
                 new Conditions<TContext>(conditions.Select(Conditions.Func<TContext>.Create)));
@@ -48,28 +50,32 @@ namespace Rethought.Commands.Builder
         }
 
         public static AsyncActionBuilder<TContext> WithCondition<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder, ICondition<TContext> condition)
+            this AsyncActionBuilder<TContext> asyncActionBuilder,
+            ICondition<TContext> condition)
         {
             asyncActionBuilder.AddStrategy(new Condition<TContext>(condition));
             return asyncActionBuilder;
         }
 
         public static AsyncActionBuilder<TContext> WithCondition<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder, System.Func<TContext, bool> condition)
+            this AsyncActionBuilder<TContext> asyncActionBuilder,
+            System.Func<TContext, bool> condition)
         {
             asyncActionBuilder.AddStrategy(new Condition<TContext>(Conditions.Func<TContext>.Create(condition)));
             return asyncActionBuilder;
         }
 
         public static AsyncActionBuilder<TContext> WithAsyncCondition<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder, IAsyncCondition<TContext> asyncCondition)
+            this AsyncActionBuilder<TContext> asyncActionBuilder,
+            IAsyncCondition<TContext> asyncCondition)
         {
             asyncActionBuilder.AddStrategy(new AsyncCondition<TContext>(asyncCondition));
             return asyncActionBuilder;
         }
 
         public static AsyncActionBuilder<TContext> WithAsyncCondition<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder, System.Func<TContext, Task<bool>> asyncCondition)
+            this AsyncActionBuilder<TContext> asyncActionBuilder,
+            System.Func<TContext, Task<bool>> asyncCondition)
         {
             asyncActionBuilder.AddStrategy(
                 new AsyncCondition<TContext>(AsyncFunc<TContext>.Create(asyncCondition)));
@@ -88,23 +94,25 @@ namespace Rethought.Commands.Builder
 
         public static AsyncActionBuilder<TContext> WithAdapter<TContext, TCommandSpecificContext>(
             this AsyncActionBuilder<TContext> asyncActionBuilder,
-            Func<TContext, CancellationToken, Task<Option<TCommandSpecificContext, bool>>> asyncTypeParser,
+            Func<TContext, CancellationToken, Task<Option<Option<TCommandSpecificContext>>>> asyncTypeParser,
             System.Action<AsyncActionBuilder<TCommandSpecificContext>> configuration)
         {
             asyncActionBuilder.AddStrategy(
                 new AsyncAdapter<TContext, TCommandSpecificContext>(
-                    AsyncFunc<TContext, TCommandSpecificContext>.Create(asyncTypeParser), configuration));
+                    AsyncFunc<TContext, TCommandSpecificContext>.Create(asyncTypeParser),
+                    configuration));
             return asyncActionBuilder;
         }
 
         public static AsyncActionBuilder<TContext> WithAdapter<TContext, TCommandSpecificContext>(
             this AsyncActionBuilder<TContext> asyncActionBuilder,
-            System.Func<TContext, Task<Option<TCommandSpecificContext, bool>>> asyncTypeParser,
+            System.Func<TContext, Task<Option<Option<TCommandSpecificContext>>>> asyncTypeParser,
             System.Action<AsyncActionBuilder<TCommandSpecificContext>> configuration)
         {
             asyncActionBuilder.AddStrategy(
                 new AsyncAdapter<TContext, TCommandSpecificContext>(
-                    AsyncFunc<TContext, TCommandSpecificContext>.Create(asyncTypeParser), configuration));
+                    AsyncFunc<TContext, TCommandSpecificContext>.Create(asyncTypeParser),
+                    configuration));
             return asyncActionBuilder;
         }
 
@@ -120,17 +128,19 @@ namespace Rethought.Commands.Builder
 
         public static AsyncActionBuilder<TContext> WithAdapter<TContext, TCommandSpecificContext>(
             this AsyncActionBuilder<TContext> asyncActionBuilder,
-            System.Func<TContext, Option<TCommandSpecificContext, bool>> typeParser,
+            System.Func<TContext, Option<Option<TCommandSpecificContext>>> typeParser,
             System.Action<AsyncActionBuilder<TCommandSpecificContext>> configuration)
         {
             asyncActionBuilder.AddStrategy(
                 new Adapter<TContext, TCommandSpecificContext>(
-                    Parser.Func<TContext, TCommandSpecificContext>.Create(typeParser), configuration));
+                    Parser.Func<TContext, TCommandSpecificContext>.Create(typeParser),
+                    configuration));
             return asyncActionBuilder;
         }
 
         public static AsyncActionBuilder<TContext> WithAsyncAction<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder, IAsyncAction<TContext> asyncAction)
+            this AsyncActionBuilder<TContext> asyncActionBuilder,
+            IAsyncAction<TContext> asyncAction)
         {
             asyncActionBuilder.AddStrategy(new AsyncAction<TContext>(asyncAction));
 
@@ -138,7 +148,8 @@ namespace Rethought.Commands.Builder
         }
 
         public static AsyncActionBuilder<TContext> WithAsyncAction<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder, Func<TContext, CancellationToken, Task<Result>> asyncFunc)
+            this AsyncActionBuilder<TContext> asyncActionBuilder,
+            Func<TContext, CancellationToken, Task<Result>> asyncFunc)
         {
             asyncActionBuilder.AddStrategy(new AsyncAction<TContext>(AsyncFuncAdapter<TContext>.Create(asyncFunc)));
 
@@ -146,7 +157,8 @@ namespace Rethought.Commands.Builder
         }
 
         public static AsyncActionBuilder<TContext> WithAsyncAction<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder, System.Func<TContext, Task<Result>> asyncFunc)
+            this AsyncActionBuilder<TContext> asyncActionBuilder,
+            System.Func<TContext, Task<Result>> asyncFunc)
         {
             asyncActionBuilder.AddStrategy(new AsyncAction<TContext>(AsyncFuncAdapter<TContext>.Create(asyncFunc)));
 
@@ -154,7 +166,8 @@ namespace Rethought.Commands.Builder
         }
 
         public static AsyncActionBuilder<TContext> WithAction<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder, IAction<TContext> action)
+            this AsyncActionBuilder<TContext> asyncActionBuilder,
+            IAction<TContext> action)
         {
             asyncActionBuilder.AddStrategy(new Strategies.Action<TContext>(action));
 
@@ -172,7 +185,8 @@ namespace Rethought.Commands.Builder
 
 
         public static AsyncActionBuilder<TContext> WithEnumerating<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder, IEnumerable<IAsyncAction<TContext>> asyncActions,
+            this AsyncActionBuilder<TContext> asyncActionBuilder,
+            IEnumerable<IAsyncAction<TContext>> asyncActions,
             IFactory<TContext> factory)
         {
             asyncActionBuilder.AddStrategy(new Strategies.Enumerator<TContext>(asyncActions, factory));
@@ -182,7 +196,8 @@ namespace Rethought.Commands.Builder
 
         public static AsyncActionBuilder<TContext> WithEnumerating<TContext>(
             this AsyncActionBuilder<TContext> asyncActionBuilder,
-            IEnumerable<System.Func<IAsyncAction<TContext>>> asyncActions, IFactory<TContext> factory)
+            IEnumerable<System.Func<IAsyncAction<TContext>>> asyncActions,
+            IFactory<TContext> factory)
         {
             asyncActionBuilder.AddStrategy(new LazyEnumerator<TContext>(asyncActions, factory));
 
@@ -191,7 +206,8 @@ namespace Rethought.Commands.Builder
 
         public static AsyncActionBuilder<TContext> WithEnumerating<TContext>(
             this AsyncActionBuilder<TContext> asyncActionBuilder,
-            IEnumerable<System.Action<AsyncActionBuilder<TContext>>> configuration, IFactory<TContext> factory)
+            IEnumerable<System.Action<AsyncActionBuilder<TContext>>> configuration,
+            IFactory<TContext> factory)
         {
             asyncActionBuilder.AddStrategy(new BuildAsyncActionBuilders<TContext>(configuration, factory));
 
@@ -202,8 +218,10 @@ namespace Rethought.Commands.Builder
             this AsyncActionBuilder<TContext> asyncActionBuilder,
             IEnumerable<System.Action<AsyncActionBuilder<TContext>>> configuration)
         {
-            asyncActionBuilder.AddStrategy(new BuildAsyncActionBuilders<TContext>(configuration,
-                new AnyOrNoneFactory<TContext>()));
+            asyncActionBuilder.AddStrategy(
+                new BuildAsyncActionBuilders<TContext>(
+                    configuration,
+                    new AnyOrNoneFactory<TContext>()));
 
             return asyncActionBuilder;
         }
@@ -212,24 +230,30 @@ namespace Rethought.Commands.Builder
             this AsyncActionBuilder<TContext> asyncActionBuilder,
             IEnumerable<System.Func<IAsyncAction<TContext>>> asyncActions)
         {
-            asyncActionBuilder.AddStrategy(new LazyEnumerator<TContext>(asyncActions,
-                new AnyOrNoneFactory<TContext>()));
+            asyncActionBuilder.AddStrategy(
+                new LazyEnumerator<TContext>(
+                    asyncActions,
+                    new AnyOrNoneFactory<TContext>()));
 
             return asyncActionBuilder;
         }
 
         public static AsyncActionBuilder<TContext> Any<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder, IEnumerable<IAsyncAction<TContext>> asyncActions)
+            this AsyncActionBuilder<TContext> asyncActionBuilder,
+            IEnumerable<IAsyncAction<TContext>> asyncActions)
         {
-            asyncActionBuilder.AddStrategy(new Strategies.Enumerator<TContext>(asyncActions,
-                new AnyOrNoneFactory<TContext>()));
+            asyncActionBuilder.AddStrategy(
+                new Strategies.Enumerator<TContext>(
+                    asyncActions,
+                    new AnyOrNoneFactory<TContext>()));
 
             return asyncActionBuilder;
         }
 
         public static AsyncActionBuilder<TContext> All<TContext>(
             this AsyncActionBuilder<TContext> asyncActionBuilder,
-            IEnumerable<System.Action<AsyncActionBuilder<TContext>>> configuration, bool shortCircuiting = true)
+            IEnumerable<System.Action<AsyncActionBuilder<TContext>>> configuration,
+            bool shortCircuiting = true)
         {
             IFactory<TContext> factory;
 
@@ -251,7 +275,8 @@ namespace Rethought.Commands.Builder
         /// <param name="asyncAction">The asynchronous action.</param>
         /// <returns></returns>
         public static AsyncActionBuilder<TContext> WithPrototype<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder, IAsyncAction<TContext> asyncAction)
+            this AsyncActionBuilder<TContext> asyncActionBuilder,
+            IAsyncAction<TContext> asyncAction)
         {
             asyncActionBuilder.Strategies.Insert(0, new Prototype<TContext>(asyncAction));
 
@@ -260,7 +285,8 @@ namespace Rethought.Commands.Builder
 
         public static AsyncActionBuilder<TContext> All<TContext>(
             this AsyncActionBuilder<TContext> asyncActionBuilder,
-            IEnumerable<System.Func<IAsyncAction<TContext>>> asyncActions, bool shortCircuiting = true)
+            IEnumerable<System.Func<IAsyncAction<TContext>>> asyncActions,
+            bool shortCircuiting = true)
         {
             IFactory<TContext> factory;
 
@@ -275,7 +301,8 @@ namespace Rethought.Commands.Builder
         }
 
         public static AsyncActionBuilder<TContext> All<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder, IEnumerable<IAsyncAction<TContext>> asyncActions,
+            this AsyncActionBuilder<TContext> asyncActionBuilder,
+            IEnumerable<IAsyncAction<TContext>> asyncActions,
             bool shortCircuiting = true)
         {
             IFactory<TContext> factory;

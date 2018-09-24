@@ -22,16 +22,17 @@ namespace Rethought.Commands.Actions
         {
             var newContext = await asyncParser.ParseAsync(context, cancellationToken).ConfigureAwait(false);
 
-            if (newContext.HasValue)
+            if (newContext.TryGetValue(out var option))
             {
-                return await command.InvokeAsync(newContext.ValueOr(default(TOutgoingContext)), cancellationToken).ConfigureAwait(false);
+                if (option.TryGetValue(out var value))
+                {
+                    return await command.InvokeAsync(value, cancellationToken).ConfigureAwait(false);
+                }
+
+                return Result.None;
             }
 
-            // This is dirty, but the only way to get the exception value of Option without modifying the source code or using reflection
-            bool exception = default;
-            newContext.Match(x => { }, b => exception = b);
-
-            return exception ? Result.Aborted : Result.None;
+            return Result.Aborted;
         }
     }
 }
