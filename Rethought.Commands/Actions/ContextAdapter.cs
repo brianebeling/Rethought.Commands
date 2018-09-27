@@ -5,20 +5,20 @@ using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Actions
 {
-    public class ContextAdapter<TIncomingContext, TOutgoingContext> : IAsyncAction<TIncomingContext>
+    public class ContextAdapter<TInput, TOutput> : IAsyncResultFunc<TInput>
     {
-        private readonly IAsyncAction<TOutgoingContext> command;
-        private readonly ITypeParser<TIncomingContext, TOutgoingContext> parser;
+        private readonly IAsyncResultFunc<TOutput> command;
+        private readonly ITypeParser<TInput, TOutput> parser;
 
         public ContextAdapter(
-            ITypeParser<TIncomingContext, TOutgoingContext> parser,
-            IAsyncAction<TOutgoingContext> command)
+            ITypeParser<TInput, TOutput> parser,
+            IAsyncResultFunc<TOutput> command)
         {
             this.parser = parser;
             this.command = command;
         }
 
-        public async Task<Result> InvokeAsync(TIncomingContext context, CancellationToken cancellationToken)
+        public async Task<Result> InvokeAsync(TInput context, CancellationToken cancellationToken)
         {
             if (parser.Parse(context).TryGetValue(out var option))
             {

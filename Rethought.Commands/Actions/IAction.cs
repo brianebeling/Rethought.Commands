@@ -2,6 +2,6 @@
 {
     public interface IAction<in TContext>
     {
-        Result Invoke(TContext context);
+        void Invoke(TContext context);
     }
 }

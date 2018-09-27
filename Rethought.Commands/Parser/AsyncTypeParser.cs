@@ -8,6 +8,9 @@ namespace Rethought.Commands.Parser
     {
         public abstract Task<Option<Option<TOutput>>> ParseAsync(TInput input, CancellationToken cancellationToken);
 
-        protected Option<Option<TOutput>> Aborted() => default;
+        protected Option<Option<TOutput>> Aborted()
+        {
+            return default;
+        }
     }
 }

@@ -5,316 +5,374 @@ using System.Threading;
 using System.Threading.Tasks;
 using Optional;
 using Rethought.Commands.Actions;
-using Rethought.Commands.Actions.Adapter;
-using Rethought.Commands.Actions.Enumerating;
+using Rethought.Commands.Actions.Adapters.AsyncFunc;
+using Rethought.Commands.Actions.Adapters.System.Action;
+using Rethought.Commands.Actions.Adapters.System.Func;
+using Rethought.Commands.Actions.Enumerator;
+using Rethought.Commands.Builder.Visitors;
 using Rethought.Commands.Conditions;
 using Rethought.Commands.Parser;
-using Rethought.Commands.Strategies;
 
 namespace Rethought.Commands.Builder
 {
     public static class AsyncActionBuilderExtensions
     {
-        public static AsyncActionBuilder<TContext> WithConditions<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder,
+        public static AsyncFuncBuilder<TContext> WithConditions<TContext>(
+            this AsyncFuncBuilder<TContext> asyncFuncBuilder,
             IEnumerable<ICondition<TContext>> conditions)
         {
-            asyncActionBuilder.AddStrategy(new Conditions<TContext>(conditions));
-            return asyncActionBuilder;
+            asyncFuncBuilder.AddStrategy(new Conditions<TContext>(conditions));
+            return asyncFuncBuilder;
         }
 
-        public static AsyncActionBuilder<TContext> WithConditions<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder,
+        public static AsyncFuncBuilder<TContext> WithConditions<TContext>(
+            this AsyncFuncBuilder<TContext> asyncFuncBuilder,
             IEnumerable<System.Func<TContext, bool>> conditions)
         {
-            asyncActionBuilder.AddStrategy(
+            asyncFuncBuilder.AddStrategy(
                 new Conditions<TContext>(conditions.Select(Conditions.Func<TContext>.Create)));
-            return asyncActionBuilder;
+            return asyncFuncBuilder;
         }
 
-        public static AsyncActionBuilder<TContext> WithAsyncConditions<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder,
+        public static AsyncFuncBuilder<TContext> WithAsyncConditions<TContext>(
+            this AsyncFuncBuilder<TContext> asyncFuncBuilder,
             IEnumerable<IAsyncCondition<TContext>> asyncConditions)
         {
-            asyncActionBuilder.AddStrategy(new AsyncConditions<TContext>(asyncConditions));
-            return asyncActionBuilder;
+            asyncFuncBuilder.AddStrategy(new AsyncConditions<TContext>(asyncConditions));
+            return asyncFuncBuilder;
         }
 
-        public static AsyncActionBuilder<TContext> WithAsyncConditions<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder,
+        public static AsyncFuncBuilder<TContext> WithAsyncConditions<TContext>(
+            this AsyncFuncBuilder<TContext> asyncFuncBuilder,
             IEnumerable<System.Func<TContext, Task<bool>>> asyncConditions)
         {
-            asyncActionBuilder.AddStrategy(
+            asyncFuncBuilder.AddStrategy(
                 new AsyncConditions<TContext>(asyncConditions.Select(AsyncFunc<TContext>.Create)));
-            return asyncActionBuilder;
+            return asyncFuncBuilder;
         }
 
-        public static AsyncActionBuilder<TContext> WithCondition<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder,
+        public static AsyncFuncBuilder<TContext> WithCondition<TContext>(
+            this AsyncFuncBuilder<TContext> asyncFuncBuilder,
             ICondition<TContext> condition)
         {
-            asyncActionBuilder.AddStrategy(new Condition<TContext>(condition));
-            return asyncActionBuilder;
+            asyncFuncBuilder.AddStrategy(new Condition<TContext>(condition));
+            return asyncFuncBuilder;
         }
 
-        public static AsyncActionBuilder<TContext> WithCondition<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder,
+        public static AsyncFuncBuilder<TContext> WithCondition<TContext>(
+            this AsyncFuncBuilder<TContext> asyncFuncBuilder,
             System.Func<TContext, bool> condition)
         {
-            asyncActionBuilder.AddStrategy(new Condition<TContext>(Conditions.Func<TContext>.Create(condition)));
-            return asyncActionBuilder;
+            asyncFuncBuilder.AddStrategy(new Condition<TContext>(Conditions.Func<TContext>.Create(condition)));
+            return asyncFuncBuilder;
         }
 
-        public static AsyncActionBuilder<TContext> WithAsyncCondition<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder,
+        public static AsyncFuncBuilder<TContext> WithAsyncCondition<TContext>(
+            this AsyncFuncBuilder<TContext> asyncFuncBuilder,
             IAsyncCondition<TContext> asyncCondition)
         {
-            asyncActionBuilder.AddStrategy(new AsyncCondition<TContext>(asyncCondition));
-            return asyncActionBuilder;
+            asyncFuncBuilder.AddStrategy(new AsyncCondition<TContext>(asyncCondition));
+            return asyncFuncBuilder;
         }
 
-        public static AsyncActionBuilder<TContext> WithAsyncCondition<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder,
+        public static AsyncFuncBuilder<TContext> WithAsyncCondition<TContext>(
+            this AsyncFuncBuilder<TContext> asyncFuncBuilder,
             System.Func<TContext, Task<bool>> asyncCondition)
         {
-            asyncActionBuilder.AddStrategy(
+            asyncFuncBuilder.AddStrategy(
                 new AsyncCondition<TContext>(AsyncFunc<TContext>.Create(asyncCondition)));
-            return asyncActionBuilder;
+            return asyncFuncBuilder;
         }
 
-        public static AsyncActionBuilder<TContext> WithAdapter<TContext, TCommandSpecificContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder,
-            IAsyncTypeParser<TContext, TCommandSpecificContext> asyncTypeParser,
-            System.Action<AsyncActionBuilder<TCommandSpecificContext>> configuration)
+        public static AsyncFuncBuilder<TInput> WithAdapter<TInput, TOutput>(
+            this AsyncFuncBuilder<TInput> asyncFuncBuilder,
+            IAsyncTypeParser<TInput, TOutput> asyncTypeParser,
+            System.Action<AsyncFuncBuilder<TOutput>> configuration)
         {
-            asyncActionBuilder.AddStrategy(
-                new AsyncAdapter<TContext, TCommandSpecificContext>(asyncTypeParser, configuration));
-            return asyncActionBuilder;
+            asyncFuncBuilder.AddStrategy(
+                new AsyncAdapter<TInput, TOutput>(asyncTypeParser, configuration));
+            return asyncFuncBuilder;
         }
 
-        public static AsyncActionBuilder<TContext> WithAdapter<TContext, TCommandSpecificContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder,
-            Func<TContext, CancellationToken, Task<Option<Option<TCommandSpecificContext>>>> asyncTypeParser,
-            System.Action<AsyncActionBuilder<TCommandSpecificContext>> configuration)
+        public static AsyncFuncBuilder<TInput> WithAdapter<TInput, TOutput>(
+            this AsyncFuncBuilder<TInput> asyncFuncBuilder,
+            Func<TInput, CancellationToken, Task<Option<Option<TOutput>>>> asyncTypeParser,
+            System.Action<AsyncFuncBuilder<TOutput>> configuration)
         {
-            asyncActionBuilder.AddStrategy(
-                new AsyncAdapter<TContext, TCommandSpecificContext>(
-                    AsyncFunc<TContext, TCommandSpecificContext>.Create(asyncTypeParser),
+            asyncFuncBuilder.AddStrategy(
+                new AsyncAdapter<TInput, TOutput>(
+                    AsyncFunc<TInput, TOutput>.Create(asyncTypeParser),
                     configuration));
-            return asyncActionBuilder;
+            return asyncFuncBuilder;
         }
 
-        public static AsyncActionBuilder<TContext> WithAdapter<TContext, TCommandSpecificContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder,
-            System.Func<TContext, Task<Option<Option<TCommandSpecificContext>>>> asyncTypeParser,
-            System.Action<AsyncActionBuilder<TCommandSpecificContext>> configuration)
+        public static AsyncFuncBuilder<TInput> WithAdapter<TInput, TOutput>(
+            this AsyncFuncBuilder<TInput> asyncFuncBuilder,
+            System.Func<TInput, Task<Option<Option<TOutput>>>> asyncTypeParser,
+            System.Action<AsyncFuncBuilder<TOutput>> configuration)
         {
-            asyncActionBuilder.AddStrategy(
-                new AsyncAdapter<TContext, TCommandSpecificContext>(
-                    AsyncFunc<TContext, TCommandSpecificContext>.Create(asyncTypeParser),
+            asyncFuncBuilder.AddStrategy(
+                new AsyncAdapter<TInput, TOutput>(
+                    AsyncFunc<TInput, TOutput>.Create(asyncTypeParser),
                     configuration));
-            return asyncActionBuilder;
+            return asyncFuncBuilder;
         }
 
-        public static AsyncActionBuilder<TContext> WithAdapter<TContext, TCommandSpecificContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder,
-            ITypeParser<TContext, TCommandSpecificContext> typeParser,
-            System.Action<AsyncActionBuilder<TCommandSpecificContext>> configuration)
+        public static AsyncFuncBuilder<TInput> WithAdapter<TInput, TOutput>(
+            this AsyncFuncBuilder<TInput> asyncFuncBuilder,
+            ITypeParser<TInput, TOutput> typeParser,
+            System.Action<AsyncFuncBuilder<TOutput>> configuration)
         {
-            asyncActionBuilder.AddStrategy(
-                new Adapter<TContext, TCommandSpecificContext>(typeParser, configuration));
-            return asyncActionBuilder;
+            asyncFuncBuilder.AddStrategy(
+                new Adapter<TInput, TOutput>(typeParser, configuration));
+            return asyncFuncBuilder;
         }
 
-        public static AsyncActionBuilder<TContext> WithAdapter<TContext, TCommandSpecificContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder,
-            System.Func<TContext, Option<Option<TCommandSpecificContext>>> typeParser,
-            System.Action<AsyncActionBuilder<TCommandSpecificContext>> configuration)
+        public static AsyncFuncBuilder<TInput> WithAdapter<TInput, TOutput>(
+            this AsyncFuncBuilder<TInput> asyncFuncBuilder,
+            System.Func<TInput, Option<Option<TOutput>>> typeParser,
+            System.Action<AsyncFuncBuilder<TOutput>> configuration)
         {
-            asyncActionBuilder.AddStrategy(
-                new Adapter<TContext, TCommandSpecificContext>(
-                    Parser.Func<TContext, TCommandSpecificContext>.Create(typeParser),
+            asyncFuncBuilder.AddStrategy(
+                new Adapter<TInput, TOutput>(
+                    Parser.Func<TInput, TOutput>.Create(typeParser),
                     configuration));
-            return asyncActionBuilder;
+            return asyncFuncBuilder;
         }
 
-        public static AsyncActionBuilder<TContext> WithAsyncAction<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder,
-            IAsyncAction<TContext> asyncAction)
+        public static AsyncFuncBuilder<TContext> WithAsyncFunc<TContext>(
+            this AsyncFuncBuilder<TContext> asyncFuncBuilder,
+            IAsyncResultFunc<TContext> asyncResultFunc)
         {
-            asyncActionBuilder.AddStrategy(new AsyncAction<TContext>(asyncAction));
+            asyncFuncBuilder.AddStrategy(new AsyncResultFunc<TContext>(asyncResultFunc));
 
-            return asyncActionBuilder;
+            return asyncFuncBuilder;
         }
 
-        public static AsyncActionBuilder<TContext> WithAsyncAction<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder,
+        public static AsyncFuncBuilder<TContext> WithAsyncFunc<TContext>(
+            this AsyncFuncBuilder<TContext> asyncFuncBuilder,
             Func<TContext, CancellationToken, Task<Result>> asyncFunc)
         {
-            asyncActionBuilder.AddStrategy(new AsyncAction<TContext>(AsyncFuncAdapter<TContext>.Create(asyncFunc)));
+            asyncFuncBuilder.AddStrategy(
+                new AsyncResultFunc<TContext>(asyncFunc.ToAsyncResultFunc()));
 
-            return asyncActionBuilder;
+            return asyncFuncBuilder;
         }
 
-        public static AsyncActionBuilder<TContext> WithAsyncAction<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder,
+        public static AsyncFuncBuilder<TContext> WithAsyncFunc<TContext>(
+            this AsyncFuncBuilder<TContext> asyncFuncBuilder,
+            System.Func<TContext, Task> asyncFunc)
+        {
+            asyncFuncBuilder.AddStrategy(
+                new AsyncResultFunc<TContext>(asyncFunc.ToAsyncFunc().ToAsyncResultFunc()));
+
+            return asyncFuncBuilder;
+        }
+
+        public static AsyncFuncBuilder<TContext> WithAsyncFunc<TContext>(
+            this AsyncFuncBuilder<TContext> asyncFuncBuilder,
+            IAsyncFunc<TContext> asyncFunc)
+        {
+            asyncFuncBuilder.AddStrategy(
+                new AsyncResultFunc<TContext>(asyncFunc.ToAsyncResultFunc()));
+
+            return asyncFuncBuilder;
+        }
+
+        public static AsyncFuncBuilder<TContext> WithAsyncFunc<TContext>(
+            this AsyncFuncBuilder<TContext> asyncFuncBuilder,
+            Func<TContext, CancellationToken, Task> asyncFunc)
+        {
+            asyncFuncBuilder.AddStrategy(
+                new AsyncResultFunc<TContext>(asyncFunc.ToAsyncFunc().ToAsyncResultFunc()));
+
+            return asyncFuncBuilder;
+        }
+
+        public static AsyncFuncBuilder<TContext> WithAsyncFunc<TContext>(
+            this AsyncFuncBuilder<TContext> asyncFuncBuilder,
             System.Func<TContext, Task<Result>> asyncFunc)
         {
-            asyncActionBuilder.AddStrategy(new AsyncAction<TContext>(AsyncFuncAdapter<TContext>.Create(asyncFunc)));
+            asyncFuncBuilder.AddStrategy(
+                new AsyncResultFunc<TContext>(asyncFunc.ToAsyncResultFunc()));
 
-            return asyncActionBuilder;
+            return asyncFuncBuilder;
         }
 
-        public static AsyncActionBuilder<TContext> WithAction<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder,
-            IAction<TContext> action)
+        public static AsyncFuncBuilder<TContext> WithFunc<TContext>(
+            this AsyncFuncBuilder<TContext> asyncFuncBuilder,
+            IResultFunc<TContext> resultFunc)
         {
-            asyncActionBuilder.AddStrategy(new Strategies.Action<TContext>(action));
+            asyncFuncBuilder.AddStrategy(new Visitors.Func<TContext>(resultFunc));
 
-            return asyncActionBuilder;
+            return asyncFuncBuilder;
         }
 
-        public static AsyncActionBuilder<TContext> WithAction<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder,
+        public static AsyncFuncBuilder<TContext> WithFunc<TContext>(
+            this AsyncFuncBuilder<TContext> asyncFuncBuilder,
             System.Func<TContext, Result> func)
         {
-            asyncActionBuilder.AddStrategy(new Strategies.Action<TContext>(FuncAdapter<TContext>.Create(func)));
+            asyncFuncBuilder.AddStrategy(new Visitors.Func<TContext>(func.ToResultFunc()));
 
-            return asyncActionBuilder;
+            return asyncFuncBuilder;
+        }
+
+        public static AsyncFuncBuilder<TContext> WithAction<TContext>(
+            this AsyncFuncBuilder<TContext> asyncFuncBuilder,
+            System.Action<TContext> action)
+        {
+            asyncFuncBuilder.AddStrategy(new Visitors.Func<TContext>(action.ToResultFunc()));
+
+            return asyncFuncBuilder;
+        }
+
+        public static AsyncFuncBuilder<TContext> WithAction<TContext>(
+            this AsyncFuncBuilder<TContext> asyncFuncBuilder,
+            IAction<TContext> action)
+        {
+            asyncFuncBuilder.AddStrategy(new Visitors.Action<TContext>(action));
+
+            return asyncFuncBuilder;
         }
 
 
-        public static AsyncActionBuilder<TContext> WithEnumerating<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder,
-            IEnumerable<IAsyncAction<TContext>> asyncActions,
+        public static AsyncFuncBuilder<TContext> WithEnumerating<TContext>(
+            this AsyncFuncBuilder<TContext> asyncFuncBuilder,
+            IEnumerable<IAsyncResultFunc<TContext>> asyncActions,
             IFactory<TContext> factory)
         {
-            asyncActionBuilder.AddStrategy(new Strategies.Enumerator<TContext>(asyncActions, factory));
+            asyncFuncBuilder.AddStrategy(new Visitors.Enumerator<TContext>(asyncActions, factory));
 
-            return asyncActionBuilder;
+            return asyncFuncBuilder;
         }
 
-        public static AsyncActionBuilder<TContext> WithEnumerating<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder,
-            IEnumerable<System.Func<IAsyncAction<TContext>>> asyncActions,
+        public static AsyncFuncBuilder<TContext> WithEnumerating<TContext>(
+            this AsyncFuncBuilder<TContext> asyncFuncBuilder,
+            IEnumerable<System.Func<IAsyncResultFunc<TContext>>> asyncActions,
             IFactory<TContext> factory)
         {
-            asyncActionBuilder.AddStrategy(new LazyEnumerator<TContext>(asyncActions, factory));
+            asyncFuncBuilder.AddStrategy(new LazyEnumerator<TContext>(asyncActions, factory));
 
-            return asyncActionBuilder;
+            return asyncFuncBuilder;
         }
 
-        public static AsyncActionBuilder<TContext> WithEnumerating<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder,
-            IEnumerable<System.Action<AsyncActionBuilder<TContext>>> configuration,
+        public static AsyncFuncBuilder<TContext> WithEnumerating<TContext>(
+            this AsyncFuncBuilder<TContext> asyncFuncBuilder,
+            IEnumerable<System.Action<AsyncFuncBuilder<TContext>>> configuration,
             IFactory<TContext> factory)
         {
-            asyncActionBuilder.AddStrategy(new BuildAsyncActionBuilders<TContext>(configuration, factory));
+            asyncFuncBuilder.AddStrategy(new BuildAsyncActionBuilders<TContext>(configuration, factory));
 
-            return asyncActionBuilder;
+            return asyncFuncBuilder;
         }
 
-        public static AsyncActionBuilder<TContext> Any<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder,
-            IEnumerable<System.Action<AsyncActionBuilder<TContext>>> configuration)
+        public static AsyncFuncBuilder<TContext> Any<TContext>(
+            this AsyncFuncBuilder<TContext> asyncFuncBuilder,
+            IEnumerable<System.Action<AsyncFuncBuilder<TContext>>> configuration,
+            System.Func<Result, bool> predicate)
         {
-            asyncActionBuilder.AddStrategy(
+            asyncFuncBuilder.AddStrategy(
                 new BuildAsyncActionBuilders<TContext>(
                     configuration,
-                    new AnyOrNoneFactory<TContext>()));
+                    new AnyFactory<TContext>(predicate)));
 
-            return asyncActionBuilder;
+            return asyncFuncBuilder;
         }
 
-        public static AsyncActionBuilder<TContext> Any<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder,
-            IEnumerable<System.Func<IAsyncAction<TContext>>> asyncActions)
+        public static AsyncFuncBuilder<TContext> Any<TContext>(
+            this AsyncFuncBuilder<TContext> asyncFuncBuilder,
+            IEnumerable<System.Func<IAsyncResultFunc<TContext>>> asyncActions,
+            System.Func<Result, bool> predicate)
         {
-            asyncActionBuilder.AddStrategy(
+            asyncFuncBuilder.AddStrategy(
                 new LazyEnumerator<TContext>(
                     asyncActions,
-                    new AnyOrNoneFactory<TContext>()));
+                    new AnyFactory<TContext>(predicate)));
 
-            return asyncActionBuilder;
+            return asyncFuncBuilder;
         }
 
-        public static AsyncActionBuilder<TContext> Any<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder,
-            IEnumerable<IAsyncAction<TContext>> asyncActions)
+        public static AsyncFuncBuilder<TContext> Any<TContext>(
+            this AsyncFuncBuilder<TContext> asyncFuncBuilder,
+            IEnumerable<IAsyncResultFunc<TContext>> asyncActions,
+            System.Func<Result, bool> predicate)
         {
-            asyncActionBuilder.AddStrategy(
-                new Strategies.Enumerator<TContext>(
+            asyncFuncBuilder.AddStrategy(
+                new Visitors.Enumerator<TContext>(
                     asyncActions,
-                    new AnyOrNoneFactory<TContext>()));
+                    new AnyFactory<TContext>(predicate)));
 
-            return asyncActionBuilder;
+            return asyncFuncBuilder;
         }
 
-        public static AsyncActionBuilder<TContext> All<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder,
-            IEnumerable<System.Action<AsyncActionBuilder<TContext>>> configuration,
+        public static AsyncFuncBuilder<TContext> All<TContext>(
+            this AsyncFuncBuilder<TContext> asyncFuncBuilder,
+            IEnumerable<System.Action<AsyncFuncBuilder<TContext>>> configuration,
+            System.Func<Result, bool> predicate,
             bool shortCircuiting = true)
         {
             IFactory<TContext> factory;
 
             if (shortCircuiting)
-                factory = new AllOrAbortedFactory<TContext>();
+                factory = new AllFactory<TContext>(predicate);
             else
-                factory = new PersistingAllOrAbortedFactory<TContext>();
+                factory = new ContinuingAllFactory<TContext>(predicate);
 
-            asyncActionBuilder.AddStrategy(new BuildAsyncActionBuilders<TContext>(configuration, factory));
+            asyncFuncBuilder.AddStrategy(new BuildAsyncActionBuilders<TContext>(configuration, factory));
 
-            return asyncActionBuilder;
+            return asyncFuncBuilder;
         }
 
         /// <summary>
         ///     Sets a prototype. A prototype is inserted as the first strategy.
-        ///     Use this if you want to extend an existing <see cref="IAsyncAction{TContext}" />.
+        ///     Use this if you want to extend an existing <see cref="IAsyncResultFunc{TContext}" />.
         /// </summary>
-        /// <param name="asyncActionBuilder">The async action builder</param>
-        /// <param name="asyncAction">The asynchronous action.</param>
+        /// <param name="asyncFuncBuilder">The async action builder</param>
+        /// <param name="asyncResultFunc">The asynchronous action.</param>
         /// <returns></returns>
-        public static AsyncActionBuilder<TContext> WithPrototype<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder,
-            IAsyncAction<TContext> asyncAction)
+        public static AsyncFuncBuilder<TContext> WithPrototype<TContext>(
+            this AsyncFuncBuilder<TContext> asyncFuncBuilder,
+            IAsyncResultFunc<TContext> asyncResultFunc)
         {
-            asyncActionBuilder.Strategies.Insert(0, new Prototype<TContext>(asyncAction));
+            asyncFuncBuilder.Strategies.Insert(0, new Prototype<TContext>(asyncResultFunc));
 
-            return asyncActionBuilder;
+            return asyncFuncBuilder;
         }
 
-        public static AsyncActionBuilder<TContext> All<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder,
-            IEnumerable<System.Func<IAsyncAction<TContext>>> asyncActions,
+        public static AsyncFuncBuilder<TContext> All<TContext>(
+            this AsyncFuncBuilder<TContext> asyncFuncBuilder,
+            IEnumerable<System.Func<IAsyncResultFunc<TContext>>> asyncActions,
+            System.Func<Result, bool> predicate,
             bool shortCircuiting = true)
         {
             IFactory<TContext> factory;
 
             if (shortCircuiting)
-                factory = new AllOrAbortedFactory<TContext>();
+                factory = new AllFactory<TContext>(predicate);
             else
-                factory = new PersistingAllOrAbortedFactory<TContext>();
+                factory = new ContinuingAllFactory<TContext>(predicate);
 
-            asyncActionBuilder.AddStrategy(new LazyEnumerator<TContext>(asyncActions, factory));
+            asyncFuncBuilder.AddStrategy(new LazyEnumerator<TContext>(asyncActions, factory));
 
-            return asyncActionBuilder;
+            return asyncFuncBuilder;
         }
 
-        public static AsyncActionBuilder<TContext> All<TContext>(
-            this AsyncActionBuilder<TContext> asyncActionBuilder,
-            IEnumerable<IAsyncAction<TContext>> asyncActions,
+        public static AsyncFuncBuilder<TContext> All<TContext>(
+            this AsyncFuncBuilder<TContext> asyncFuncBuilder,
+            IEnumerable<IAsyncResultFunc<TContext>> asyncActions,
+            System.Func<Result, bool> predicate,
             bool shortCircuiting = true)
         {
             IFactory<TContext> factory;
 
             if (shortCircuiting)
-                factory = new AllOrAbortedFactory<TContext>();
+                factory = new AllFactory<TContext>(predicate);
             else
-                factory = new PersistingAllOrAbortedFactory<TContext>();
+                factory = new ContinuingAllFactory<TContext>(predicate);
 
-            asyncActionBuilder.AddStrategy(new Strategies.Enumerator<TContext>(asyncActions, factory));
+            asyncFuncBuilder.AddStrategy(new Visitors.Enumerator<TContext>(asyncActions, factory));
 
-            return asyncActionBuilder;
+            return asyncFuncBuilder;
         }
     }
 }

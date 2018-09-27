@@ -10,7 +10,8 @@ namespace Rethought.Commands.Parser
     public interface ITypeParser<in TInput, TOutput>
     {
         /// <summary>
-        ///     Attempts to parse.
+        ///     Attempts to parse. The first Option is none when the parsing was aborted. The second Option is none when the
+        ///     parsing was unsuccessful.
         /// </summary>
         /// <param name="input">The input <see cref="TInput" />.</param>
         Option<Option<TOutput>> Parse(TInput input);

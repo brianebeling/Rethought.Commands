@@ -4,12 +4,12 @@ using Rethought.Commands.Conditions;
 
 namespace Rethought.Commands.Actions.Conditions
 {
-    public class Condition<TContext> : IAsyncAction<TContext>
+    public class Condition<TContext> : IAsyncResultFunc<TContext>
     {
         private readonly ICondition<TContext> precondition;
-        private readonly IAsyncAction<TContext> success;
+        private readonly IAsyncResultFunc<TContext> success;
 
-        public Condition(ICondition<TContext> precondition, IAsyncAction<TContext> success)
+        public Condition(ICondition<TContext> precondition, IAsyncResultFunc<TContext> success)
         {
             this.precondition = precondition;
             this.success = success;
