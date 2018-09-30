@@ -8,10 +8,10 @@ namespace Rethought.Commands.Actions
     public class ContextAdapter<TInput, TOutput> : IAsyncResultFunc<TInput>
     {
         private readonly IAsyncResultFunc<TOutput> command;
-        private readonly ITypeParser<TInput, TOutput> parser;
+        private readonly IAbortableTypeParser<TInput, TOutput> parser;
 
         public ContextAdapter(
-            ITypeParser<TInput, TOutput> parser,
+            IAbortableTypeParser<TInput, TOutput> parser,
             IAsyncResultFunc<TOutput> command)
         {
             this.parser = parser;
@@ -20,7 +20,7 @@ namespace Rethought.Commands.Actions
 
         public async Task<Result> InvokeAsync(TInput context, CancellationToken cancellationToken)
         {
-            if (parser.Parse(context).TryGetValue(out var option))
+            if (parser.TryParse(context, out var option))
             {
                 if (option.TryGetValue(out var value))
                 {

@@ -86,51 +86,53 @@ namespace Rethought.Commands.Builder
 
         public static AsyncFuncBuilder<TInput> WithAdapter<TInput, TOutput>(
             this AsyncFuncBuilder<TInput> asyncFuncBuilder,
-            IAsyncTypeParser<TInput, TOutput> asyncTypeParser,
+            IAsyncAbortableTypeParser<TInput, TOutput> asyncAbortableTypeParser,
             System.Action<AsyncFuncBuilder<TOutput>> configuration)
         {
             asyncFuncBuilder.AddStrategy(
-                new AsyncAdapter<TInput, TOutput>(asyncTypeParser, configuration));
+                new AsyncAdapter<TInput, TOutput>(asyncAbortableTypeParser, configuration));
             return asyncFuncBuilder;
         }
 
         public static AsyncFuncBuilder<TInput> WithAdapter<TInput, TOutput>(
             this AsyncFuncBuilder<TInput> asyncFuncBuilder,
-            Func<TInput, CancellationToken, Task<Option<Option<TOutput>>>> asyncTypeParser,
+            Func<TInput, CancellationToken, Task<(bool, Option<TOutput>)>> asyncTypeParser,
             System.Action<AsyncFuncBuilder<TOutput>> configuration)
         {
             asyncFuncBuilder.AddStrategy(
                 new AsyncAdapter<TInput, TOutput>(
-                    AsyncFunc<TInput, TOutput>.Create(asyncTypeParser),
+                    AsyncAbortableFunc<TInput, TOutput>.Create(asyncTypeParser),
                     configuration));
             return asyncFuncBuilder;
         }
 
         public static AsyncFuncBuilder<TInput> WithAdapter<TInput, TOutput>(
             this AsyncFuncBuilder<TInput> asyncFuncBuilder,
-            System.Func<TInput, Task<Option<Option<TOutput>>>> asyncTypeParser,
+            System.Func<TInput, Task<(bool, Option<TOutput>)>> asyncTypeParser,
             System.Action<AsyncFuncBuilder<TOutput>> configuration)
         {
             asyncFuncBuilder.AddStrategy(
                 new AsyncAdapter<TInput, TOutput>(
-                    AsyncFunc<TInput, TOutput>.Create(asyncTypeParser),
+                    AsyncAbortableFunc<TInput, TOutput>.Create(asyncTypeParser),
                     configuration));
             return asyncFuncBuilder;
         }
 
         public static AsyncFuncBuilder<TInput> WithAdapter<TInput, TOutput>(
             this AsyncFuncBuilder<TInput> asyncFuncBuilder,
-            ITypeParser<TInput, TOutput> typeParser,
+            IAbortableTypeParser<TInput, TOutput> abortableTypeParser,
             System.Action<AsyncFuncBuilder<TOutput>> configuration)
         {
             asyncFuncBuilder.AddStrategy(
-                new Adapter<TInput, TOutput>(typeParser, configuration));
+                new Adapter<TInput, TOutput>(abortableTypeParser, configuration));
             return asyncFuncBuilder;
         }
 
+
+
         public static AsyncFuncBuilder<TInput> WithAdapter<TInput, TOutput>(
             this AsyncFuncBuilder<TInput> asyncFuncBuilder,
-            System.Func<TInput, Option<Option<TOutput>>> typeParser,
+            System.Func<TInput, (bool, Option<TOutput>)> typeParser,
             System.Action<AsyncFuncBuilder<TOutput>> configuration)
         {
             asyncFuncBuilder.AddStrategy(

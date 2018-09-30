@@ -8,14 +8,14 @@ namespace Rethought.Commands.Builder.Visitors
 {
     public class AsyncAdapter<TInput, TOutput> : IStrategy<TInput>
     {
-        private readonly IAsyncTypeParser<TInput, TOutput> asyncParser;
+        private readonly IAsyncAbortableTypeParser<TInput, TOutput> asyncAbortableParser;
         private readonly System.Action<AsyncFuncBuilder<TOutput>> configuration;
 
         public AsyncAdapter(
-            IAsyncTypeParser<TInput, TOutput> asyncParser,
+            IAsyncAbortableTypeParser<TInput, TOutput> asyncAbortableParser,
             System.Action<AsyncFuncBuilder<TOutput>> configuration)
         {
-            this.asyncParser = asyncParser;
+            this.asyncAbortableParser = asyncAbortableParser;
             this.configuration = configuration;
         }
 
@@ -27,7 +27,7 @@ namespace Rethought.Commands.Builder.Visitors
             var command = asyncActionBuilder.Build();
 
             var asyncContextSwitchDecorator =
-                new AsyncResultFunc<TInput, TOutput>(asyncParser, command);
+                new AsyncResultFunc<TInput, TOutput>(asyncAbortableParser, command);
 
             if (nextAsyncActionOption.TryGetValue(out var nextAsyncAction))
             {

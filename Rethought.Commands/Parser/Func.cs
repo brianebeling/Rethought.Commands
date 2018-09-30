@@ -2,21 +2,25 @@
 
 namespace Rethought.Commands.Parser
 {
-    public sealed class Func<TInput, TOutput> : ITypeParser<TInput, TOutput>
+    public sealed class Func<TInput, TOutput> : IAbortableTypeParser<TInput, TOutput>
     {
-        private readonly System.Func<TInput, Option<Option<TOutput>>> func;
+        private readonly System.Func<TInput, (bool Completed, Option<TOutput> Output)> func;
 
-        private Func(System.Func<TInput, Option<Option<TOutput>>> func)
+        private Func(System.Func<TInput, (bool Completed, Option<TOutput> Output)> func)
         {
             this.func = func;
         }
 
-        public Option<Option<TOutput>> Parse(TInput input)
+        public bool TryParse(TInput input, out Option<TOutput> option)
         {
-            return func.Invoke(input);
+            var (completed, output) = func.Invoke(input);
+
+            option = output;
+            return completed;
         }
 
-        public static Func<TInput, TOutput> Create(System.Func<TInput, Option<Option<TOutput>>> func)
+
+        public static Func<TInput, TOutput> Create(System.Func<TInput, (bool Completed, Option<TOutput> Output)> func)
         {
             return new Func<TInput, TOutput>(func);
         }

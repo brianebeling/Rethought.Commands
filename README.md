@@ -7,7 +7,7 @@ the user and a channel from which the message was sent.
 
 To build commands you can use the fluent extensions or manually construct commands.
 
-Table of Contens
+Table of Content
 - [Rethought.Commands](#rethoughtcommands)
     - [Installation](#installation)
     - [Getting Started](#getting-started)
@@ -18,9 +18,11 @@ Table of Contens
         - [Adapters](#adapters)
         - [Option](#option)
         - [TypeParser](#typeparser)
+            - [IAbortableTypeParser](#iabortabletypeparser)
+            - [ITypeParser](#itypeparser)
         - [Prototype](#prototype)
         - [All, Any and Enumerating](#all-any-and-enumerating)
-    - [Todo](#todo)
+    - [To do](#to-do)
 
 ## Installation
 
@@ -32,8 +34,7 @@ Rethought.Commands on its own is not very useful. What makes it powerful is the 
 
 Currently there are the following extensions available:
 
-- [Rethought.Commands.Discord.Net]()
-
+- [Rethought.Commands.Discord.Net]() soon
 
 ## Documentation
 
@@ -111,14 +112,14 @@ public class MyAction : IAction<MyContext>
 
 ### Funcs
 
-There is an important distiction to make here. Funcs are types that have a return value. And as such "Async Actions" are Funcs. In the library there are three different types of Funcs.
+There is an important distinction to make here. Funcs are types that have a return value. And as such "Async Actions" are Funcs. In the library there are three different types of Funcs.
 
 `IAsyncFunc` is the previously mentioned async variant of an `IAction`. It also comes with a `CancellationToken`.
 
 The other two types are called `IResultFunc` and `IAsyncResultFunc`. The main difference here is that these two types also return a `Result`.
 
 The `Result` is used for flow control and can have three values.
-`Result.Aborted` is usually returned when the operation was forcefully aborted or there was some kind of exception. `Result.Completed` whenever the operation was sucessful.
+`Result.Aborted` is usually returned when the operation was forcefully aborted or there was some kind of exception. `Result.Completed` whenever the operation was successful.
 `Result.None` is a bit more special and used when no match was found.
 
 There are plenty of overloads for Actions and Funcs, accepting `System.Action`, `System.Func` or the library built-in Action and Func types. The Func ones come with options to not discard the `CancellationToken`.
@@ -169,18 +170,19 @@ You can find more information about the concrete framework used [here](https://g
 ### TypeParser
 
 Like in the previous section said, these are used to parse from Type A to Type B.
-However, there is one speciality in their return type.
+However, there are two types of TypeParsers.
 
-In the current version these return `Option<Option<TOutput>>`. What might look confusing on the first glance hopefully becomes clear on the second.
+#### IAbortableTypeParser
 
-The first Option determines whether the parsing operation was aborted or not. Often when you use an Adapter you need additional user input for example.
+These return a bool and as out parameter `Option<TOutput>`. What might look confusing on the first glance hopefully becomes clear on the second.
 
-The second Option determines whether the result `TOutput` is empty. With other words,
-if the first Option was not empty, but the second one was, then the TypeParser was unable to parse.
+The bool determines whether the parsing operation was aborted or not. It is aborted when the bool is false.
 
-I would recommend you to use the method `Flatten()` on the result and then you can do `TryGetValue(...)` to get access to the value.
+Then the Option determines whether the TypeParser `TOutput` succeeded parsing and contains the `TOutput`.
 
-If you want to check whether the parsing was aborted do `TryGetValue` on the first Option already.
+#### ITypeParser
+
+These are not abortable. They only return an `Option<TOutput>` which means the parsing succeeded or not. There is no way to determine from an outer scope if the parsing was aborted or unsuccessful.
 
 ### Prototype
 
@@ -190,9 +192,9 @@ Please note that currently it is not supported to continue building a command fr
 
 ### All, Any and Enumerating
 
-Alone these probably aren't too powerful. But a lot of the additional packages may make usage of them. They behave very similar to LINQ. The operations accept either a collection of `Action<AsyncFuncBuilder<TContext>>`, `IAsyncResultFunc<TContext>` or `Func<IAsyncResultFunc<TContext>>` and a predicate. All also has a bool `shortCircuiting` which determines whether it will stop at the first occurence of something not being true from the predicate or will continue till the end and then return the result.
+Alone these probably aren't too powerful. But a lot of the additional packages may make usage of them. They behave very similar to LINQ. The operations accept either a collection of `Action<AsyncFuncBuilder<TContext>>`, `IAsyncResultFunc<TContext>` or `Func<IAsyncResultFunc<TContext>>` and a predicate. All also has a bool `shortCircuiting` which determines whether it will stop at the first occurrence of something not being true from the predicate or will continue till the end and then return the result.
 
 Enumerating does not accept a predicate and simply is enumerating a collection of the three above mentioned types.
 
-## Todo
+## To do
 - Various chat application implementations (Slack, ..)

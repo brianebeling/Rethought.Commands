@@ -7,24 +7,24 @@ namespace Rethought.Commands.Actions.Adapters.Context.AsyncResultFunc
 {
     public class AsyncResultFunc<TInput, TOutput> : IAsyncResultFunc<TInput>
     {
-        private readonly IAsyncTypeParser<TInput, TOutput> asyncParser;
+        private readonly IAsyncAbortableTypeParser<TInput, TOutput> asyncAbortableParser;
         private readonly IAsyncResultFunc<TOutput> asyncResultFunc;
 
         public AsyncResultFunc(
-            IAsyncTypeParser<TInput, TOutput> asyncParser,
+            IAsyncAbortableTypeParser<TInput, TOutput> asyncAbortableParser,
             IAsyncResultFunc<TOutput> asyncResultFunc)
         {
-            this.asyncParser = asyncParser;
+            this.asyncAbortableParser = asyncAbortableParser;
             this.asyncResultFunc = asyncResultFunc;
         }
 
         public async Task<Result> InvokeAsync(TInput context, CancellationToken cancellationToken)
         {
-            var newContext = await asyncParser.ParseAsync(context, cancellationToken).ConfigureAwait(false);
+            var newContext = await asyncAbortableParser.ParseAsync(context, cancellationToken).ConfigureAwait(false);
 
-            if (newContext.TryGetValue(out var option))
+            if (newContext.Completed)
             {
-                if (option.TryGetValue(out var value))
+                if (newContext.Result.TryGetValue(out var value))
                 {
                     return await asyncResultFunc.InvokeAsync(value, cancellationToken).ConfigureAwait(false);
                 }
