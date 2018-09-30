@@ -1,4 +1,5 @@
 # Rethought.Commands
+
 The motivation behind this project is to simplify the building of commands.
 Commands are defined as functions that can be invoked with a context.
 The context is a specified generic type argument.
@@ -34,7 +35,7 @@ Rethought.Commands on its own is not very useful. What makes it powerful is the 
 
 Currently there are the following extensions available:
 
-- [Rethought.Commands.Discord.Net]() soon
+- [Rethought.Commands.Discord.Net](https://github.com/RethoughtSolutions/Rethought.Commands.Discord.Net) soon
 
 ## Documentation
 
@@ -50,9 +51,9 @@ public class MyContext
 }
 ```
 
-As you can see the context is often just a simple data holding object. In real world scenarios there will be much more data.
+Like you can see the context is often just a simple data holding object. In real world scenarios there will be much more data.
 
-Next lets take a look at our composition.
+Next lets take a look at our builder in action.
 
 ```csharp
 public class Program
@@ -75,6 +76,7 @@ public class Program
 A lot is happening here, so let us inspect it more closely step by step.
 
 ### Conditions
+
 First we create an `AsyncActionBuilder` with our `TContext` (`MyContext`). This is where we configure our whole command tree.
 In this simple example we start by adding a condition such that the `Sender` must equal `"Foo"`.
 But there are also other ways to do the exact same thing. Here it does not make much sense, because it is so simple, but if you often re-use the same condition
@@ -197,4 +199,5 @@ Alone these probably aren't too powerful. But a lot of the additional packages m
 Enumerating does not accept a predicate and simply is enumerating a collection of the three above mentioned types.
 
 ## To do
+
 - Various chat application implementations (Slack, ..)
