@@ -15,8 +15,6 @@
         }
 
         public static Action<TContext> Create(global::System.Action<TContext> action)
-        {
-            return new Action<TContext>(action);
-        }
+            => new Action<TContext>(action);
     }
 }

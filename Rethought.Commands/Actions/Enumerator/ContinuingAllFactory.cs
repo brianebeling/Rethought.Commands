@@ -13,8 +13,6 @@ namespace Rethought.Commands.Actions.Enumerator
         }
 
         public IAsyncResultFunc<TContext> Create(IEnumerable<IAsyncResultFunc<TContext>> asyncActions)
-        {
-            return ContinuingAll<TContext>.Create(asyncActions, predicate);
-        }
+            => ContinuingAll<TContext>.Create(asyncActions, predicate);
     }
 }

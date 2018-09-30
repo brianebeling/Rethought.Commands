@@ -14,10 +14,8 @@ namespace Rethought.Commands.Builder.Visitors
         }
 
         public IAsyncResultFunc<TContext> Invoke(Option<IAsyncResultFunc<TContext>> nextAsyncActionOption)
-        {
-            return nextAsyncActionOption.TryGetValue(out var nextAsyncAction)
+            => nextAsyncActionOption.TryGetValue(out var nextAsyncAction)
                 ? Actions.Enumerator.Enumerator<TContext>.Create(asyncResultFunc, nextAsyncAction)
                 : asyncResultFunc;
-        }
     }
 }

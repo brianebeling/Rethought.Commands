@@ -37,8 +37,6 @@ namespace Rethought.Commands.Actions.Enumerator
         public static Any<TContext> Create(
             IEnumerable<IAsyncResultFunc<TContext>> actionAsyncs,
             Func<Result, bool> predicate)
-        {
-            return new Any<TContext>(actionAsyncs, predicate);
-        }
+            => new Any<TContext>(actionAsyncs, predicate);
     }
 }
