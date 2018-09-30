@@ -3,18 +3,19 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Optional;
+using Rethought.Extensions.Optional;
 
-namespace Rethought.Commands.Parser.Auto
+namespace Rethought.Commands.Parser.Abortable.Auto
 {
     public class TypeParser<TInput, TOutput> : ITypeParser<TInput, TOutput>
     {
         private const char GroupEnclosingChar = '"';
 
-        private readonly Dictionary<Type, ITypeParser<string, object>> dictionary;
+        private readonly Dictionary<Type, IAbortableTypeParser<string, object>> dictionary;
         private readonly System.Func<TInput, string> func;
 
         public TypeParser(
-            Dictionary<Type, ITypeParser<string, object>> dictionary,
+            Dictionary<Type, IAbortableTypeParser<string, object>> dictionary,
             System.Func<TInput, string> func)
         {
             this.dictionary = dictionary;
@@ -43,11 +44,17 @@ namespace Rethought.Commands.Parser.Auto
 
                     // TODO handle out of range exception..
                     var typeParser = dictionary[constructorParameter.ParameterType];
-                    var value = typeParser.Parse(inputParameter);
-
-                    // TODO support option
-
-                    parsedParameters.Add(value);
+                    if (typeParser.TryParse(inputParameter, out var output))
+                    {
+                        if (output.TryGetValue(out var value))
+                        {
+                            parsedParameters.Add(value);
+                        }
+                    }
+                    else
+                    {
+                        return default;
+                    }
                 }
 
                 if (parsedParameters.Any())
