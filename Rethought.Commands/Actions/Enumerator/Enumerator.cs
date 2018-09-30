@@ -24,13 +24,9 @@ namespace Rethought.Commands.Actions.Enumerator
         }
 
         public static Enumerator<TContext> Create(params IAsyncResultFunc<TContext>[] resultFuncAsyncsResult)
-        {
-            return new Enumerator<TContext>(resultFuncAsyncsResult);
-        }
+            => new Enumerator<TContext>(resultFuncAsyncsResult);
 
         public static Enumerator<TContext> Create(IEnumerable<IAsyncResultFunc<TContext>> actionAsyncs)
-        {
-            return new Enumerator<TContext>(actionAsyncs);
-        }
+            => new Enumerator<TContext>(actionAsyncs);
     }
 }

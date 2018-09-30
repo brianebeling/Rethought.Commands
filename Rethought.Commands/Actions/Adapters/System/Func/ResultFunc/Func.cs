@@ -12,13 +12,9 @@ namespace Rethought.Commands.Actions.Adapters.System.Func.ResultFunc
         }
 
         public Result Invoke(TContext context)
-        {
-            return func.Invoke(context);
-        }
+            => func.Invoke(context);
 
         public static Func<TContext> Create(Func<TContext, Result> func)
-        {
-            return new Func<TContext>(func);
-        }
+            => new Func<TContext>(func);
     }
 }

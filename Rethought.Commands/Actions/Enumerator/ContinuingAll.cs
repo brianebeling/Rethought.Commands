@@ -38,8 +38,6 @@ namespace Rethought.Commands.Actions.Enumerator
         public static ContinuingAll<TContext> Create(
             IEnumerable<IAsyncResultFunc<TContext>> actionAsyncs,
             Func<Result, bool> predicate)
-        {
-            return new ContinuingAll<TContext>(actionAsyncs, predicate);
-        }
+            => new ContinuingAll<TContext>(actionAsyncs, predicate);
     }
 }

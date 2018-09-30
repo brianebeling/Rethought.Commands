@@ -19,8 +19,6 @@ namespace Rethought.Commands.Actions.Adapters.AsyncFunc.AsyncResultFunc
         }
 
         public static AsyncFunc<TContext> Create(IAsyncFunc<TContext> asyncFunc)
-        {
-            return new AsyncFunc<TContext>(asyncFunc);
-        }
+            => new AsyncFunc<TContext>(asyncFunc);
     }
 }
