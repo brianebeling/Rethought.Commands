@@ -1,21 +1,20 @@
 ﻿using Optional;
 using Rethought.Commands.Actions;
-using Rethought.Commands.Actions.Adapters.Context.AsyncResultFunc;
 using Rethought.Commands.Parser.Abortable;
 using Rethought.Extensions.Optional;
 
-namespace Rethought.Commands.Builder.Visitors
+namespace Rethought.Commands.Builder.Visitors.Abortable
 {
-    public class AsyncAdapter<TInput, TOutput> : IStrategy<TInput>
+    public class Adapter<TInput, TOutput> : IStrategy<TInput>
     {
-        private readonly IAsyncAbortableTypeParser<TInput, TOutput> asyncAbortableParser;
         private readonly System.Action<AsyncFuncBuilder<TOutput>> configuration;
+        private readonly IAbortableTypeParser<TInput, TOutput> parser;
 
-        public AsyncAdapter(
-            IAsyncAbortableTypeParser<TInput, TOutput> asyncAbortableParser,
+        public Adapter(
+            IAbortableTypeParser<TInput, TOutput> parser,
             System.Action<AsyncFuncBuilder<TOutput>> configuration)
         {
-            this.asyncAbortableParser = asyncAbortableParser;
+            this.parser = parser;
             this.configuration = configuration;
         }
 
@@ -27,7 +26,7 @@ namespace Rethought.Commands.Builder.Visitors
             var command = asyncActionBuilder.Build();
 
             var asyncContextSwitchDecorator =
-                new AsyncResultFunc<TInput, TOutput>(asyncAbortableParser, command);
+                new Actions.Abortable.ContextAdapter<TInput, TOutput>(parser, command);
 
             if (nextAsyncActionOption.TryGetValue(out var nextAsyncAction))
             {
