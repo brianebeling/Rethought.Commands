@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Optional;
 
-namespace Rethought.Commands.Parser
+namespace Rethought.Commands.Parser.Abortable
 {
     public sealed class AsyncAbortableFunc<TInput, TOutput> : IAsyncAbortableTypeParser<TInput, TOutput>
     {
