@@ -16,4 +16,6 @@ namespace Rethought.Commands.Parser
             return typeParser.Parse(input).Map(innerOption => (object) innerOption);
         }
     }
+
+    
 }
