@@ -1,6 +1,6 @@
 ﻿using Optional;
 
-namespace Rethought.Commands.Parser
+namespace Rethought.Commands.Parser.Abortable
 {
     /// <summary>
     ///     Attempts to parse from <see cref="TInput" /> to <see cref="TOutput" />

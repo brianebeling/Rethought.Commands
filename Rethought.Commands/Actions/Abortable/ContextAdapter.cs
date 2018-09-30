@@ -1,17 +1,17 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Rethought.Commands.Parser;
+using Rethought.Commands.Parser.Abortable;
 using Rethought.Extensions.Optional;
 
-namespace Rethought.Commands.Actions
+namespace Rethought.Commands.Actions.Abortable
 {
     public class ContextAdapter<TInput, TOutput> : IAsyncResultFunc<TInput>
     {
         private readonly IAsyncResultFunc<TOutput> command;
-        private readonly ITypeParser<TInput, TOutput> parser;
+        private readonly IAbortableTypeParser<TInput, TOutput> parser;
 
         public ContextAdapter(
-            ITypeParser<TInput, TOutput> parser,
+            IAbortableTypeParser<TInput, TOutput> parser,
             IAsyncResultFunc<TOutput> command)
         {
             this.parser = parser;
@@ -20,12 +20,17 @@ namespace Rethought.Commands.Actions
 
         public async Task<Result> InvokeAsync(TInput context, CancellationToken cancellationToken)
         {
-            if (parser.Parse(context).TryGetValue(out var value))
+            if (parser.TryParse(context, out var option))
             {
-                return await command.InvokeAsync(value, cancellationToken);
+                if (option.TryGetValue(out var value))
+                {
+                    return await command.InvokeAsync(value, cancellationToken);
+                }
+
+                return Result.None;
             }
 
-            return Result.None;
+            return Result.Aborted;
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Rethought.Commands.Parser;
+using Rethought.Commands.Parser.Abortable;
 using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Actions.Adapters.Context.AsyncResultFunc

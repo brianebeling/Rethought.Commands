@@ -11,7 +11,7 @@ using Rethought.Commands.Actions.Adapters.System.Func;
 using Rethought.Commands.Actions.Enumerator;
 using Rethought.Commands.Builder.Visitors;
 using Rethought.Commands.Conditions;
-using Rethought.Commands.Parser;
+using Rethought.Commands.Parser.Abortable;
 
 namespace Rethought.Commands.Builder
 {
@@ -124,15 +124,26 @@ namespace Rethought.Commands.Builder
             System.Action<AsyncFuncBuilder<TOutput>> configuration)
         {
             asyncFuncBuilder.AddStrategy(
-                new Adapter<TInput, TOutput>(abortableTypeParser, configuration));
+                new Visitors.Abortable.Adapter<TInput, TOutput>(abortableTypeParser, configuration));
             return asyncFuncBuilder;
         }
-
 
 
         public static AsyncFuncBuilder<TInput> WithAdapter<TInput, TOutput>(
             this AsyncFuncBuilder<TInput> asyncFuncBuilder,
             System.Func<TInput, (bool, Option<TOutput>)> typeParser,
+            System.Action<AsyncFuncBuilder<TOutput>> configuration)
+        {
+            asyncFuncBuilder.AddStrategy(
+                new Visitors.Abortable.Adapter<TInput, TOutput>(
+                    Parser.Abortable.Func<TInput, TOutput>.Create(typeParser),
+                    configuration));
+            return asyncFuncBuilder;
+        }
+
+        public static AsyncFuncBuilder<TInput> WithAdapter<TInput, TOutput>(
+            this AsyncFuncBuilder<TInput> asyncFuncBuilder,
+            System.Func<TInput, Option<TOutput>> typeParser,
             System.Action<AsyncFuncBuilder<TOutput>> configuration)
         {
             asyncFuncBuilder.AddStrategy(

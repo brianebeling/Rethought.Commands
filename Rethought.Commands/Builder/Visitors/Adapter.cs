@@ -8,10 +8,10 @@ namespace Rethought.Commands.Builder.Visitors
     public class Adapter<TInput, TOutput> : IStrategy<TInput>
     {
         private readonly System.Action<AsyncFuncBuilder<TOutput>> configuration;
-        private readonly IAbortableTypeParser<TInput, TOutput> parser;
+        private readonly ITypeParser<TInput, TOutput> parser;
 
         public Adapter(
-            IAbortableTypeParser<TInput, TOutput> parser,
+            ITypeParser<TInput, TOutput> parser,
             System.Action<AsyncFuncBuilder<TOutput>> configuration)
         {
             this.parser = parser;
