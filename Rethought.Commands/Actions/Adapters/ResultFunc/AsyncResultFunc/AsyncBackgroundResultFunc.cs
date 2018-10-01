@@ -13,13 +13,9 @@ namespace Rethought.Commands.Actions.Adapters.ResultFunc.AsyncResultFunc
         }
 
         public Task<Result> InvokeAsync(TContext context, CancellationToken cancellationToken)
-        {
-            return Task.Run(() => resultFunc.Invoke(context), cancellationToken);
-        }
+            => Task.Run(() => resultFunc.Invoke(context), cancellationToken);
 
         public static AsyncBackgroundResultFunc<TContext> Create(IResultFunc<TContext> func)
-        {
-            return new AsyncBackgroundResultFunc<TContext>(func);
-        }
+            => new AsyncBackgroundResultFunc<TContext>(func);
     }
 }

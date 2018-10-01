@@ -19,13 +19,9 @@ namespace Rethought.Commands.Actions.Adapters.System.Func.AsyncFunc
         }
 
         public static Func<TContext> Create(Func<TContext, CancellationToken, Task> func)
-        {
-            return new Func<TContext>(func);
-        }
+            => new Func<TContext>(func);
 
         public static Func<TContext> Create(Func<TContext, Task> func)
-        {
-            return new Func<TContext>((context, _) => func.Invoke(context));
-        }
+            => new Func<TContext>((context, _) => func.Invoke(context));
     }
 }

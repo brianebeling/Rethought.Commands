@@ -14,18 +14,12 @@ namespace Rethought.Commands.Actions.Adapters.System.Func.AsyncResultFunc
         }
 
         public async Task<Result> InvokeAsync(TContext context, CancellationToken cancellationToken)
-        {
-            return await func.Invoke(context, cancellationToken).ConfigureAwait(false);
-        }
+            => await func.Invoke(context, cancellationToken).ConfigureAwait(false);
 
         public static Func<TContext> Create(Func<TContext, CancellationToken, Task<Result>> func)
-        {
-            return new Func<TContext>(func);
-        }
+            => new Func<TContext>(func);
 
         public static Func<TContext> Create(Func<TContext, Task<Result>> func)
-        {
-            return new Func<TContext>((context, _) => func.Invoke(context));
-        }
+            => new Func<TContext>((context, _) => func.Invoke(context));
     }
 }
