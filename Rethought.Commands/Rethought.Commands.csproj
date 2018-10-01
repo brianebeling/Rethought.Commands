@@ -2,11 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-<<<<<<< HEAD
-    <Version>1.2.9</Version>
-=======
     <Version>1.2.12</Version>
->>>>>>> d389eb8... Fix several bugs with the Parser.Auto.Builder and introduced new features for it
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
