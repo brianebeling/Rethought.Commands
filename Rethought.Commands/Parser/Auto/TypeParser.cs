@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Optional;
+using Optional.Collections;
+using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Parser.Auto
 {
     public class TypeParser<TInput, TOutput> : ITypeParser<TInput, TOutput>
     {
+        // TODO make configurable
         private const char GroupEnclosingChar = '"';
 
         private readonly Dictionary<Type, ITypeParser<string, object>> dictionary;
@@ -29,51 +32,62 @@ namespace Rethought.Commands.Parser.Auto
 
             var commandParameter = SplitInput(message);
 
-            foreach (var constructor in type.GetConstructors())
+            if (!type.GetConstructors().FirstOrNone().TryGetValue(out var constructor)) return default;
+
+            var parsedParameters = new List<object>();
+            var infos = constructor.GetParameters();
+
+            var skippedParameters = 0;
+            for (var index = 0; index < infos.Length; index++)
             {
-                var parsedParameters = new List<object>();
-                var infos = constructor.GetParameters();
+                var constructorParameter = infos[index];
+                var constructorParameterIsOption = constructorParameter.ParameterType == typeof(Option<>);
 
-                for (var index = 0; index < infos.Length; index++)
+                if (constructorParameter.ParameterType == typeof(TOutput))
                 {
-                    var constructorParameter = infos[index];
-
-                    // TODO handle out of range exception..
-                    var inputParameter = commandParameter[index];
-
-                    // TODO handle out of range exception..
-                    var typeParser = dictionary[constructorParameter.ParameterType];
-                    var value = typeParser.Parse(inputParameter);
-
-                    // TODO support option
-
-                    parsedParameters.Add(value);
+                    parsedParameters.Add(input);
+                    skippedParameters++;
+                    continue;
                 }
 
-                if (parsedParameters.Any())
+                if (commandParameter.ElementAtOrNone(index - skippedParameters).TryGetValue(out var inputParameter))
                 {
-                    var instance = constructor.Invoke(parsedParameters.ToArray());
+                    var typeParser = dictionary[constructorParameter.ParameterType];
+                    var typeParserResultOption = typeParser.Parse(inputParameter);
 
-                    return Option.Some((TOutput) instance);
+                    if (typeParserResultOption.TryGetValue(out var typeParserResult))
+                    {
+                        parsedParameters.Add(typeParserResult);
+                    }
+                    else if (!constructorParameterIsOption)
+                    {
+                        return default;
+                    }
+                }
+                else if (!constructorParameterIsOption)
+                {
+                    return default;
                 }
             }
 
-            return default;
+            var instance = constructor.Invoke(parsedParameters.ToArray());
+
+            return Option.Some((TOutput) instance);
         }
 
-        private IReadOnlyList<string> SplitInput(string input)
+        /// <summary>
+        /// Splits the input into individual parameters. Everything inside a <see cref="GroupEnclosingChar"/> is considered as one parameter.
+        /// </summary>
+        /// <param name="input">The input.</param>
+        /// <returns></returns>
+        private static IReadOnlyList<string> SplitInput(string input)
         {
             return input.Split(GroupEnclosingChar)
                 .Select(
                     (element, index) =>
-                    {
-                        if (index % 2 == 0)
-                        {
-                            return element.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
-                        }
-
-                        return new[] {element};
-                    })
+                        index % 2 == 0
+                            ? element.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                            : new[] { element })
                 .SelectMany(element => element)
                 .ToImmutableList();
         }
