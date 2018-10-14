@@ -9,7 +9,7 @@ using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Builder.Visitors
 {
-    public class AsyncConditions<TContext> : IStrategy<TContext>
+    public class AsyncConditions<TContext> : IVisitor<TContext>
     {
         private readonly IEnumerable<IAsyncCondition<TContext>> asyncConditions;
 

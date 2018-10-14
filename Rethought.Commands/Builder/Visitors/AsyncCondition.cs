@@ -7,7 +7,7 @@ using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Builder.Visitors
 {
-    public class AsyncCondition<TContext> : IStrategy<TContext>
+    public class AsyncCondition<TContext> : IVisitor<TContext>
     {
         private readonly IAsyncCondition<TContext> asyncCondition;
 

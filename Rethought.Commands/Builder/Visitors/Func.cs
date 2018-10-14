@@ -7,7 +7,7 @@ using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Builder.Visitors
 {
-    public class Func<TContext> : IStrategy<TContext>
+    public class Func<TContext> : IVisitor<TContext>
     {
         private readonly IResultFunc<TContext> resultFunc;
 

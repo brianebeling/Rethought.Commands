@@ -7,7 +7,7 @@ using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Builder.Visitors
 {
-    public class LazyEnumerator<TContext> : IStrategy<TContext>
+    public class LazyEnumerator<TContext> : IVisitor<TContext>
     {
         private readonly IEnumerable<System.Func<IAsyncResultFunc<TContext>>> asyncActions;
         private readonly IFactory<TContext> factory;

@@ -8,7 +8,7 @@ using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Parser.Auto
 {
-    public class TypeParser<TInput, TOutput> : ITypeParser<TInput, TOutput>
+    public class AutoTypeParser<TInput, TOutput> : ITypeParser<TInput, TOutput>
     {
         // TODO make configurable
         private const char GroupEnclosingChar = '"';
@@ -16,7 +16,7 @@ namespace Rethought.Commands.Parser.Auto
         private readonly Dictionary<Type, ITypeParser<string, object>> dictionary;
         private readonly System.Func<TInput, string> func;
 
-        public TypeParser(
+        public AutoTypeParser(
             Dictionary<Type, ITypeParser<string, object>> dictionary,
             System.Func<TInput, string> func)
         {
@@ -32,18 +32,25 @@ namespace Rethought.Commands.Parser.Auto
 
             var commandParameter = SplitInput(message);
 
-            if (!type.GetConstructors().FirstOrNone().TryGetValue(out var constructor)) return default;
+            if (!type.GetConstructors().FirstOrNone().TryGetValue(out var constructorInfo))
+            {
+                throw new InvalidOperationException($"{nameof(TOutput)} contains no valid constructor.");
+            };
 
             var parsedParameters = new List<object>();
-            var infos = constructor.GetParameters();
+            var parameterInfos = constructorInfo.GetParameters();
 
             var skippedParameters = 0;
-            for (var index = 0; index < infos.Length; index++)
+            for (var index = 0; index < parameterInfos.Length; index++)
             {
-                var constructorParameter = infos[index];
-                var constructorParameterIsOption = constructorParameter.ParameterType == typeof(Option<>);
+                var constructorParameter = parameterInfos[index];
 
-                if (constructorParameter.ParameterType == typeof(TOutput))
+                var constructorParameterIsOption = false;
+
+                if (constructorParameter.ParameterType.IsGenericType)
+                    constructorParameterIsOption = constructorParameter.ParameterType.GetGenericTypeDefinition() == typeof(Option<>);
+
+                if (constructorParameter.ParameterType == typeof(TInput))
                 {
                     parsedParameters.Add(input);
                     skippedParameters++;
@@ -52,25 +59,53 @@ namespace Rethought.Commands.Parser.Auto
 
                 if (commandParameter.ElementAtOrNone(index - skippedParameters).TryGetValue(out var inputParameter))
                 {
-                    var typeParser = dictionary[constructorParameter.ParameterType];
+                    type = constructorParameter.ParameterType;
+                    if (constructorParameterIsOption)
+                        type = constructorParameter.ParameterType.GetGenericArguments().First();
+
+
+                    var typeParser = dictionary[type];
                     var typeParserResultOption = typeParser.Parse(inputParameter);
 
                     if (typeParserResultOption.TryGetValue(out var typeParserResult))
                     {
-                        parsedParameters.Add(typeParserResult);
+                        if (constructorParameterIsOption)
+                        {
+
+                            var methodInfo = typeof(Option).GetMethods().FirstOrNone(x => x.Name == "Some" && x.GetGenericArguments().Length == 1);
+
+                            if (methodInfo.TryGetValue(out var value))
+                            {
+                                parsedParameters.Add(value.MakeGenericMethod(type).Invoke(null, new []{ typeParserResult }));
+
+                            }
+                        }
+                        else
+                        {
+                            parsedParameters.Add(typeParserResult);
+
+                        }
                     }
-                    else if (!constructorParameterIsOption)
+                    else if (constructorParameterIsOption)
+                    {
+                        parsedParameters.Add(null);
+                    }
+                    else
                     {
                         return default;
                     }
                 }
-                else if (!constructorParameterIsOption)
+                else if (constructorParameterIsOption)
+                {
+                    parsedParameters.Add(null);
+                }
+                else
                 {
                     return default;
                 }
             }
 
-            var instance = constructor.Invoke(parsedParameters.ToArray());
+            var instance = constructorInfo.Invoke(parsedParameters.ToArray());
 
             return Option.Some((TOutput) instance);
         }

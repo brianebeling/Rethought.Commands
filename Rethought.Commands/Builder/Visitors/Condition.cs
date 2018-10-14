@@ -6,7 +6,7 @@ using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Builder.Visitors
 {
-    public class Condition<TContext> : IStrategy<TContext>
+    public class Condition<TContext> : IVisitor<TContext>
     {
         private readonly ICondition<TContext> condition;
 

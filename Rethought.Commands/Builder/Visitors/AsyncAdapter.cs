@@ -1,12 +1,12 @@
 ﻿using Optional;
 using Rethought.Commands.Actions;
 using Rethought.Commands.Actions.Adapters.Context.AsyncResultFunc;
-using Rethought.Commands.Parser.Abortable;
+using Rethought.Commands.Parser;
 using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Builder.Visitors
 {
-    public class AsyncAdapter<TInput, TOutput> : IStrategy<TInput>
+    public class AsyncAdapter<TInput, TOutput> : IVisitor<TInput>
     {
         private readonly IAsyncAbortableTypeParser<TInput, TOutput> asyncAbortableParser;
         private readonly System.Action<AsyncFuncBuilder<TOutput>> configuration;

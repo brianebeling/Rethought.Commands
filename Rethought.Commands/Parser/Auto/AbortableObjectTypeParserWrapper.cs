@@ -1,12 +1,12 @@
 ﻿using Optional;
 
-namespace Rethought.Commands.Parser.Abortable.Auto
+namespace Rethought.Commands.Parser.Auto
 {
-    public class ObjectTypeParserWrapper<TInput, TOutput> : IAbortableTypeParser<TInput, object>
+    public class AbortableObjectTypeParserWrapper<TInput, TOutput> : IAbortableTypeParser<TInput, object>
     {
         private readonly IAbortableTypeParser<TInput, TOutput> typeParser;
 
-        public ObjectTypeParserWrapper(IAbortableTypeParser<TInput, TOutput> typeParser)
+        public AbortableObjectTypeParserWrapper(IAbortableTypeParser<TInput, TOutput> typeParser)
         {
             this.typeParser = typeParser;
         }

@@ -4,7 +4,7 @@ using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Builder.Visitors
 {
-    public class Prototype<TContext> : IStrategy<TContext>
+    public class Prototype<TContext> : IVisitor<TContext>
     {
         private readonly IAsyncResultFunc<TContext> asyncResultFunc;
 

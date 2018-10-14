@@ -5,7 +5,7 @@ using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Builder.Visitors
 {
-    public class Adapter<TInput, TOutput> : IStrategy<TInput>
+    public class Adapter<TInput, TOutput> : IVisitor<TInput>
     {
         private readonly System.Action<AsyncFuncBuilder<TOutput>> configuration;
         private readonly ITypeParser<TInput, TOutput> parser;

@@ -6,7 +6,7 @@ using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Builder.Visitors
 {
-    public class BuildAsyncActionBuilders<TContext> : IStrategy<TContext>
+    public class BuildAsyncActionBuilders<TContext> : IVisitor<TContext>
     {
         private readonly IEnumerable<System.Action<AsyncFuncBuilder<TContext>>> asyncActionBuilderActions;
         private readonly IFactory<TContext> factory;

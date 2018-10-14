@@ -8,7 +8,7 @@ using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Builder.Visitors
 {
-    public class Conditions<TContext> : IStrategy<TContext>
+    public class Conditions<TContext> : IVisitor<TContext>
     {
         private readonly IEnumerable<ICondition<TContext>> conditions;
 

@@ -7,7 +7,7 @@ using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Builder.Visitors
 {
-    public class Action<TContext> : IStrategy<TContext>
+    public class Action<TContext> : IVisitor<TContext>
     {
         private readonly IAction<TContext> action;
 

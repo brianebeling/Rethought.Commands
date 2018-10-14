@@ -5,9 +5,9 @@ namespace Rethought.Commands.Builder
 {
     public interface IAsyncFuncBuilder<TContext>
     {
-        AsyncFuncBuilder<TContext> AddStrategy(IStrategy<TContext> buildingStep);
-        AsyncFuncBuilder<TContext> InsertStrategy(IStrategy<TContext> buildingStep, int index);
-        AsyncFuncBuilder<TContext> RemoveStrategy(IStrategy<TContext> buildingStep);
+        AsyncFuncBuilder<TContext> AddStrategy(IVisitor<TContext> buildingStep);
+        AsyncFuncBuilder<TContext> InsertStrategy(IVisitor<TContext> buildingStep, int index);
+        AsyncFuncBuilder<TContext> RemoveStrategy(IVisitor<TContext> buildingStep);
         AsyncFuncBuilder<TContext> RemoveStrategy(int index);
         IAsyncResultFunc<TContext> Build();
     }

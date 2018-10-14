@@ -10,27 +10,27 @@ namespace Rethought.Commands.Builder
 {
     public class AsyncFuncBuilder<TContext> : IAsyncFuncBuilder<TContext>
     {
-        protected internal readonly IList<IStrategy<TContext>> Strategies = new List<IStrategy<TContext>>();
+        protected internal readonly IList<IVisitor<TContext>> Strategies = new List<IVisitor<TContext>>();
 
         private AsyncFuncBuilder()
         {
         }
 
-        public AsyncFuncBuilder<TContext> AddStrategy(IStrategy<TContext> buildingStep)
+        public AsyncFuncBuilder<TContext> AddStrategy(IVisitor<TContext> buildingStep)
         {
             Strategies.Add(buildingStep);
 
             return this;
         }
 
-        public AsyncFuncBuilder<TContext> InsertStrategy(IStrategy<TContext> buildingStep, int index)
+        public AsyncFuncBuilder<TContext> InsertStrategy(IVisitor<TContext> buildingStep, int index)
         {
             Strategies.Insert(index, buildingStep);
 
             return this;
         }
 
-        public AsyncFuncBuilder<TContext> RemoveStrategy(IStrategy<TContext> buildingStep)
+        public AsyncFuncBuilder<TContext> RemoveStrategy(IVisitor<TContext> buildingStep)
         {
             Strategies.Remove(buildingStep);
 

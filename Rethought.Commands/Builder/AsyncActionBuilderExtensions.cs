@@ -12,7 +12,6 @@ using Rethought.Commands.Actions.Enumerator;
 using Rethought.Commands.Builder.Visitors;
 using Rethought.Commands.Conditions;
 using Rethought.Commands.Parser;
-using Rethought.Commands.Parser.Abortable;
 
 namespace Rethought.Commands.Builder
 {
@@ -135,7 +134,7 @@ namespace Rethought.Commands.Builder
             System.Action<AsyncFuncBuilder<TOutput>> configuration)
         {
             asyncFuncBuilder.AddStrategy(
-                new Visitors.Adapter<TInput, TOutput>(typeParser, configuration));
+                new Adapter<TInput, TOutput>(typeParser, configuration));
             return asyncFuncBuilder;
         }
 
@@ -147,7 +146,7 @@ namespace Rethought.Commands.Builder
         {
             asyncFuncBuilder.AddStrategy(
                 new Visitors.Abortable.Adapter<TInput, TOutput>(
-                    Parser.Abortable.Func<TInput, TOutput>.Create(typeParser),
+                    AbortableFunc<TInput, TOutput>.Create(typeParser),
                     configuration));
             return asyncFuncBuilder;
         }

@@ -1,11 +1,11 @@
 ﻿using Optional;
 using Rethought.Commands.Actions;
-using Rethought.Commands.Parser.Abortable;
+using Rethought.Commands.Parser;
 using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Builder.Visitors.Abortable
 {
-    public class Adapter<TInput, TOutput> : IStrategy<TInput>
+    public class Adapter<TInput, TOutput> : IVisitor<TInput>
     {
         private readonly System.Action<AsyncFuncBuilder<TOutput>> configuration;
         private readonly IAbortableTypeParser<TInput, TOutput> parser;
