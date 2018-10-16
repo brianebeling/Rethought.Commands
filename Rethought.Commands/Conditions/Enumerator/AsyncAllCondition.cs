@@ -3,11 +3,11 @@ using System.Threading.Tasks;
 
 namespace Rethought.Commands.Conditions.Enumerator
 {
-    public class AsyncAll<TContext> : IAsyncCondition<TContext>
+    public class AsyncAllCondition<TContext> : IAsyncCondition<TContext>
     {
         private readonly IEnumerable<IAsyncCondition<TContext>> asyncConditions;
 
-        public AsyncAll(IEnumerable<IAsyncCondition<TContext>> asyncConditions)
+        public AsyncAllCondition(IEnumerable<IAsyncCondition<TContext>> asyncConditions)
         {
             this.asyncConditions = asyncConditions;
         }

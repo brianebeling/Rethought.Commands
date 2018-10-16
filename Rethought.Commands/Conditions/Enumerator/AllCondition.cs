@@ -3,11 +3,11 @@ using System.Linq;
 
 namespace Rethought.Commands.Conditions.Enumerator
 {
-    public class All<TContext> : ICondition<TContext>
+    public class AllCondition<TContext> : ICondition<TContext>
     {
         private readonly IEnumerable<ICondition<TContext>> conditions;
 
-        public All(IEnumerable<ICondition<TContext>> conditions)
+        public AllCondition(IEnumerable<ICondition<TContext>> conditions)
         {
             this.conditions = conditions;
         }

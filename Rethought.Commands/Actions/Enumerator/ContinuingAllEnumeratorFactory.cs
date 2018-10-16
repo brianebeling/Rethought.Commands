@@ -3,16 +3,16 @@ using System.Collections.Generic;
 
 namespace Rethought.Commands.Actions.Enumerator
 {
-    public sealed class AllFactory<TContext> : IFactory<TContext>
+    public sealed class ContinuingAllEnumeratorFactory<TContext> : IEnumeratorFactory<TContext>
     {
         private readonly Func<Result, bool> predicate;
 
-        public AllFactory(Func<Result, bool> predicate)
+        public ContinuingAllEnumeratorFactory(Func<Result, bool> predicate)
         {
             this.predicate = predicate;
         }
 
         public IAsyncResultFunc<TContext> Create(IEnumerable<IAsyncResultFunc<TContext>> asyncActions)
-            => All<TContext>.Create(asyncActions, predicate);
+            => ContinuingAllEnumerator<TContext>.Create(asyncActions, predicate);
     }
 }

@@ -6,20 +6,20 @@ using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Builder.Visitors
 {
-    public class Enumerator<TContext> : IVisitor<TContext>
+    public class Enumerator<TContext> : Visitor<TContext>
     {
         private readonly IEnumerable<IAsyncResultFunc<TContext>> asyncActions;
-        private readonly IFactory<TContext> factory;
+        private readonly IEnumeratorFactory<TContext> enumeratorFactory;
 
-        public Enumerator(IEnumerable<IAsyncResultFunc<TContext>> asyncActions, IFactory<TContext> factory)
+        public Enumerator(IEnumerable<IAsyncResultFunc<TContext>> asyncActions, IEnumeratorFactory<TContext> enumeratorFactory)
         {
             this.asyncActions = asyncActions;
-            this.factory = factory;
+            this.enumeratorFactory = enumeratorFactory;
         }
 
-        public IAsyncResultFunc<TContext> Invoke(Option<IAsyncResultFunc<TContext>> nextAsyncActionOption)
+        public override IAsyncResultFunc<TContext> Invoke(Option<IAsyncResultFunc<TContext>> nextAsyncActionOption)
         {
-            var enumeratingAsyncAction = factory.Create(asyncActions);
+            var enumeratingAsyncAction = enumeratorFactory.Create(asyncActions);
 
             return nextAsyncActionOption.TryGetValue(out var nextAsyncAction)
                 ? Actions.Enumerator.Enumerator<TContext>.Create(enumeratingAsyncAction, nextAsyncAction)

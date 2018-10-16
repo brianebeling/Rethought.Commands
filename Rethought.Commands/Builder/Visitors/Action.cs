@@ -7,7 +7,7 @@ using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Builder.Visitors
 {
-    public class Action<TContext> : IVisitor<TContext>
+    public class Action<TContext> : Visitor<TContext>
     {
         private readonly IAction<TContext> action;
 
@@ -16,13 +16,13 @@ namespace Rethought.Commands.Builder.Visitors
             this.action = action;
         }
 
-        public IAsyncResultFunc<TContext> Invoke(Option<IAsyncResultFunc<TContext>> nextAsyncActionOption)
+        public override IAsyncResultFunc<TContext> Invoke(Option<IAsyncResultFunc<TContext>> nextAsyncActionOption)
         {
             var asyncAction = action.ToAsyncBackgroundFunc();
 
             async Task<Result> Func(TContext context, CancellationToken cancellationToken)
             {
-                await asyncAction.InvokeAsync(context, cancellationToken);
+                await asyncAction.InvokeAsync(context, cancellationToken).ConfigureAwait(false);
                 return Result.Completed;
             }
 

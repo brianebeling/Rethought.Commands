@@ -11,12 +11,12 @@ namespace Rethought.Commands.Actions.Enumerator
     ///     <see cref="Result.Completed" />.
     /// </summary>
     /// <typeparam name="TContext">The type of the context.</typeparam>
-    public sealed class Any<TContext> : IAsyncResultFunc<TContext>
+    public sealed class AnyEnumerator<TContext> : IAsyncResultFunc<TContext>
     {
         private readonly IEnumerable<IAsyncResultFunc<TContext>> actionsAsyncs;
         private readonly Func<Result, bool> predicate;
 
-        private Any(IEnumerable<IAsyncResultFunc<TContext>> actionAsyncsAsyncs, Func<Result, bool> predicate)
+        private AnyEnumerator(IEnumerable<IAsyncResultFunc<TContext>> actionAsyncsAsyncs, Func<Result, bool> predicate)
         {
             actionsAsyncs = actionAsyncsAsyncs;
             this.predicate = predicate;
@@ -34,9 +34,9 @@ namespace Rethought.Commands.Actions.Enumerator
             return Result.None;
         }
 
-        public static Any<TContext> Create(
+        public static AnyEnumerator<TContext> Create(
             IEnumerable<IAsyncResultFunc<TContext>> actionAsyncs,
             Func<Result, bool> predicate)
-            => new Any<TContext>(actionAsyncs, predicate);
+            => new AnyEnumerator<TContext>(actionAsyncs, predicate);
     }
 }

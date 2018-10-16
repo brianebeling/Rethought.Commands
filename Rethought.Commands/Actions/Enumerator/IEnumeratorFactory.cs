@@ -2,7 +2,7 @@
 
 namespace Rethought.Commands.Actions.Enumerator
 {
-    public interface IFactory<TContext>
+    public interface IEnumeratorFactory<TContext>
     {
         IAsyncResultFunc<TContext> Create(IEnumerable<IAsyncResultFunc<TContext>> asyncActions);
     }

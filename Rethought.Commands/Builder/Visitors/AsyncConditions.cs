@@ -9,7 +9,7 @@ using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Builder.Visitors
 {
-    public class AsyncConditions<TContext> : IVisitor<TContext>
+    public class AsyncConditions<TContext> : Visitor<TContext>
     {
         private readonly IEnumerable<IAsyncCondition<TContext>> asyncConditions;
 
@@ -18,7 +18,7 @@ namespace Rethought.Commands.Builder.Visitors
             this.asyncConditions = asyncConditions;
         }
 
-        public IAsyncResultFunc<TContext> Invoke(Option<IAsyncResultFunc<TContext>> nextAsyncActionOption)
+        public override IAsyncResultFunc<TContext> Invoke(Option<IAsyncResultFunc<TContext>> nextAsyncActionOption)
         {
             if (!nextAsyncActionOption.TryGetValue(out var nextAsyncAction))
             {
@@ -27,7 +27,7 @@ namespace Rethought.Commands.Builder.Visitors
 
             return
                 new AsyncResultCondition<TContext>(
-                    new AsyncAll<TContext>(asyncConditions),
+                    new AsyncAllCondition<TContext>(asyncConditions),
                     nextAsyncAction);
         }
     }

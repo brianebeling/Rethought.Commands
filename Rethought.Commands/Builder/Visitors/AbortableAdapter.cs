@@ -3,14 +3,14 @@ using Rethought.Commands.Actions;
 using Rethought.Commands.Parser;
 using Rethought.Extensions.Optional;
 
-namespace Rethought.Commands.Builder.Visitors.Abortable
+namespace Rethought.Commands.Builder.Visitors
 {
-    public class Adapter<TInput, TOutput> : IVisitor<TInput>
+    public class AbortableAdapter<TInput, TOutput> : Visitor<TInput>
     {
         private readonly System.Action<AsyncFuncBuilder<TOutput>> configuration;
         private readonly IAbortableTypeParser<TInput, TOutput> parser;
 
-        public Adapter(
+        public AbortableAdapter(
             IAbortableTypeParser<TInput, TOutput> parser,
             System.Action<AsyncFuncBuilder<TOutput>> configuration)
         {
@@ -18,7 +18,7 @@ namespace Rethought.Commands.Builder.Visitors.Abortable
             this.configuration = configuration;
         }
 
-        public IAsyncResultFunc<TInput> Invoke(Option<IAsyncResultFunc<TInput>> nextAsyncActionOption)
+        public override IAsyncResultFunc<TInput> Invoke(Option<IAsyncResultFunc<TInput>> nextAsyncActionOption)
         {
             var asyncActionBuilder = AsyncFuncBuilder<TOutput>.Create();
             configuration.Invoke(asyncActionBuilder);
@@ -26,7 +26,7 @@ namespace Rethought.Commands.Builder.Visitors.Abortable
             var command = asyncActionBuilder.Build();
 
             var asyncContextSwitchDecorator =
-                new Actions.Abortable.ContextAdapter<TInput, TOutput>(parser, command);
+                new AbortableContextAdapter<TInput, TOutput>(parser, command);
 
             if (nextAsyncActionOption.TryGetValue(out var nextAsyncAction))
             {

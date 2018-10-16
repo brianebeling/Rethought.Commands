@@ -19,7 +19,7 @@ namespace Rethought.Commands.Parser
             TInput input,
             CancellationToken cancellationToken)
         {
-            return await func.Invoke(input, cancellationToken);
+            return await func.Invoke(input, cancellationToken).ConfigureAwait(false);
         }
 
 

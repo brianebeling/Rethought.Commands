@@ -3,14 +3,14 @@ using System.Threading.Tasks;
 using Rethought.Commands.Parser;
 using Rethought.Extensions.Optional;
 
-namespace Rethought.Commands.Actions.Abortable
+namespace Rethought.Commands.Actions
 {
-    public class ContextAdapter<TInput, TOutput> : IAsyncResultFunc<TInput>
+    public class AbortableContextAdapter<TInput, TOutput> : IAsyncResultFunc<TInput>
     {
         private readonly IAsyncResultFunc<TOutput> command;
         private readonly IAbortableTypeParser<TInput, TOutput> parser;
 
-        public ContextAdapter(
+        public AbortableContextAdapter(
             IAbortableTypeParser<TInput, TOutput> parser,
             IAsyncResultFunc<TOutput> command)
         {
@@ -24,7 +24,7 @@ namespace Rethought.Commands.Actions.Abortable
             {
                 if (option.TryGetValue(out var value))
                 {
-                    return await command.InvokeAsync(value, cancellationToken);
+                    return await command.InvokeAsync(value, cancellationToken).ConfigureAwait(false);
                 }
 
                 return Result.None;

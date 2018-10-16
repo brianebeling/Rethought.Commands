@@ -14,7 +14,7 @@ namespace Rethought.Commands.Actions.Adapters.Action.AsyncFunc
 
         public async Task InvokeAsync(TContext context, CancellationToken cancellationToken)
         {
-            await Task.Run(() => action.Invoke(context), cancellationToken);
+            await Task.Run(() => action.Invoke(context), cancellationToken).ConfigureAwait(false);
         }
     }
 }

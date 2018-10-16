@@ -30,7 +30,7 @@ namespace Rethought.Commands.Builder
             IEnumerable<System.Func<TContext, bool>> conditions)
         {
             asyncFuncBuilder.AddStrategy(
-                new Conditions<TContext>(conditions.Select(Conditions.Func<TContext>.Create)));
+                new Conditions<TContext>(conditions.Select(Conditions.FuncCondition<TContext>.Create)));
             return asyncFuncBuilder;
         }
 
@@ -47,7 +47,7 @@ namespace Rethought.Commands.Builder
             IEnumerable<System.Func<TContext, Task<bool>>> asyncConditions)
         {
             asyncFuncBuilder.AddStrategy(
-                new AsyncConditions<TContext>(asyncConditions.Select(AsyncFunc<TContext>.Create)));
+                new AsyncConditions<TContext>(asyncConditions.Select(AsyncFuncCondition<TContext>.Create)));
             return asyncFuncBuilder;
         }
 
@@ -63,7 +63,7 @@ namespace Rethought.Commands.Builder
             this AsyncFuncBuilder<TContext> asyncFuncBuilder,
             System.Func<TContext, bool> condition)
         {
-            asyncFuncBuilder.AddStrategy(new Condition<TContext>(Conditions.Func<TContext>.Create(condition)));
+            asyncFuncBuilder.AddStrategy(new Condition<TContext>(Conditions.FuncCondition<TContext>.Create(condition)));
             return asyncFuncBuilder;
         }
 
@@ -80,7 +80,7 @@ namespace Rethought.Commands.Builder
             System.Func<TContext, Task<bool>> asyncCondition)
         {
             asyncFuncBuilder.AddStrategy(
-                new AsyncCondition<TContext>(AsyncFunc<TContext>.Create(asyncCondition)));
+                new AsyncCondition<TContext>(AsyncFuncCondition<TContext>.Create(asyncCondition)));
             return asyncFuncBuilder;
         }
 
@@ -124,7 +124,7 @@ namespace Rethought.Commands.Builder
             System.Action<AsyncFuncBuilder<TOutput>> configuration)
         {
             asyncFuncBuilder.AddStrategy(
-                new Visitors.Abortable.Adapter<TInput, TOutput>(abortableTypeParser, configuration));
+                new AbortableAdapter<TInput, TOutput>(abortableTypeParser, configuration));
             return asyncFuncBuilder;
         }
 
@@ -145,7 +145,7 @@ namespace Rethought.Commands.Builder
             System.Action<AsyncFuncBuilder<TOutput>> configuration)
         {
             asyncFuncBuilder.AddStrategy(
-                new Visitors.Abortable.Adapter<TInput, TOutput>(
+                new AbortableAdapter<TInput, TOutput>(
                     AbortableFunc<TInput, TOutput>.Create(typeParser),
                     configuration));
             return asyncFuncBuilder;
@@ -262,9 +262,9 @@ namespace Rethought.Commands.Builder
         public static AsyncFuncBuilder<TContext> WithEnumerating<TContext>(
             this AsyncFuncBuilder<TContext> asyncFuncBuilder,
             IEnumerable<IAsyncResultFunc<TContext>> asyncActions,
-            IFactory<TContext> factory)
+            IEnumeratorFactory<TContext> enumeratorFactory)
         {
-            asyncFuncBuilder.AddStrategy(new Visitors.Enumerator<TContext>(asyncActions, factory));
+            asyncFuncBuilder.AddStrategy(new Visitors.Enumerator<TContext>(asyncActions, enumeratorFactory));
 
             return asyncFuncBuilder;
         }
@@ -272,9 +272,9 @@ namespace Rethought.Commands.Builder
         public static AsyncFuncBuilder<TContext> WithEnumerating<TContext>(
             this AsyncFuncBuilder<TContext> asyncFuncBuilder,
             IEnumerable<System.Func<IAsyncResultFunc<TContext>>> asyncActions,
-            IFactory<TContext> factory)
+            IEnumeratorFactory<TContext> enumeratorFactory)
         {
-            asyncFuncBuilder.AddStrategy(new LazyEnumerator<TContext>(asyncActions, factory));
+            asyncFuncBuilder.AddStrategy(new LazyEnumerator<TContext>(asyncActions, enumeratorFactory));
 
             return asyncFuncBuilder;
         }
@@ -282,9 +282,9 @@ namespace Rethought.Commands.Builder
         public static AsyncFuncBuilder<TContext> WithEnumerating<TContext>(
             this AsyncFuncBuilder<TContext> asyncFuncBuilder,
             IEnumerable<System.Action<AsyncFuncBuilder<TContext>>> configuration,
-            IFactory<TContext> factory)
+            IEnumeratorFactory<TContext> enumeratorFactory)
         {
-            asyncFuncBuilder.AddStrategy(new BuildAsyncActionBuilders<TContext>(configuration, factory));
+            asyncFuncBuilder.AddStrategy(new BuildAsyncActionBuilders<TContext>(configuration, enumeratorFactory));
 
             return asyncFuncBuilder;
         }
@@ -297,7 +297,7 @@ namespace Rethought.Commands.Builder
             asyncFuncBuilder.AddStrategy(
                 new BuildAsyncActionBuilders<TContext>(
                     configuration,
-                    new AnyFactory<TContext>(predicate)));
+                    new AnyEnumeratorFactory<TContext>(predicate)));
 
             return asyncFuncBuilder;
         }
@@ -310,7 +310,7 @@ namespace Rethought.Commands.Builder
             asyncFuncBuilder.AddStrategy(
                 new LazyEnumerator<TContext>(
                     asyncActions,
-                    new AnyFactory<TContext>(predicate)));
+                    new AnyEnumeratorFactory<TContext>(predicate)));
 
             return asyncFuncBuilder;
         }
@@ -323,7 +323,7 @@ namespace Rethought.Commands.Builder
             asyncFuncBuilder.AddStrategy(
                 new Visitors.Enumerator<TContext>(
                     asyncActions,
-                    new AnyFactory<TContext>(predicate)));
+                    new AnyEnumeratorFactory<TContext>(predicate)));
 
             return asyncFuncBuilder;
         }
@@ -334,14 +334,14 @@ namespace Rethought.Commands.Builder
             System.Func<Result, bool> predicate,
             bool shortCircuiting = true)
         {
-            IFactory<TContext> factory;
+            IEnumeratorFactory<TContext> enumeratorFactory;
 
             if (shortCircuiting)
-                factory = new AllFactory<TContext>(predicate);
+                enumeratorFactory = new AllEnumeratorEnumeratorFactory<TContext>(predicate);
             else
-                factory = new ContinuingAllFactory<TContext>(predicate);
+                enumeratorFactory = new ContinuingAllEnumeratorFactory<TContext>(predicate);
 
-            asyncFuncBuilder.AddStrategy(new BuildAsyncActionBuilders<TContext>(configuration, factory));
+            asyncFuncBuilder.AddStrategy(new BuildAsyncActionBuilders<TContext>(configuration, enumeratorFactory));
 
             return asyncFuncBuilder;
         }
@@ -357,7 +357,7 @@ namespace Rethought.Commands.Builder
             this AsyncFuncBuilder<TContext> asyncFuncBuilder,
             IAsyncResultFunc<TContext> asyncResultFunc)
         {
-            asyncFuncBuilder.Strategies.Insert(0, new Prototype<TContext>(asyncResultFunc));
+            asyncFuncBuilder.Visitors.Insert(0, new Prototype<TContext>(asyncResultFunc));
 
             return asyncFuncBuilder;
         }
@@ -368,14 +368,14 @@ namespace Rethought.Commands.Builder
             System.Func<Result, bool> predicate,
             bool shortCircuiting = true)
         {
-            IFactory<TContext> factory;
+            IEnumeratorFactory<TContext> enumeratorFactory;
 
             if (shortCircuiting)
-                factory = new AllFactory<TContext>(predicate);
+                enumeratorFactory = new AllEnumeratorEnumeratorFactory<TContext>(predicate);
             else
-                factory = new ContinuingAllFactory<TContext>(predicate);
+                enumeratorFactory = new ContinuingAllEnumeratorFactory<TContext>(predicate);
 
-            asyncFuncBuilder.AddStrategy(new LazyEnumerator<TContext>(asyncActions, factory));
+            asyncFuncBuilder.AddStrategy(new LazyEnumerator<TContext>(asyncActions, enumeratorFactory));
 
             return asyncFuncBuilder;
         }
@@ -386,14 +386,14 @@ namespace Rethought.Commands.Builder
             System.Func<Result, bool> predicate,
             bool shortCircuiting = true)
         {
-            IFactory<TContext> factory;
+            IEnumeratorFactory<TContext> enumeratorFactory;
 
             if (shortCircuiting)
-                factory = new AllFactory<TContext>(predicate);
+                enumeratorFactory = new AllEnumeratorEnumeratorFactory<TContext>(predicate);
             else
-                factory = new ContinuingAllFactory<TContext>(predicate);
+                enumeratorFactory = new ContinuingAllEnumeratorFactory<TContext>(predicate);
 
-            asyncFuncBuilder.AddStrategy(new Visitors.Enumerator<TContext>(asyncActions, factory));
+            asyncFuncBuilder.AddStrategy(new Visitors.Enumerator<TContext>(asyncActions, enumeratorFactory));
 
             return asyncFuncBuilder;
         }

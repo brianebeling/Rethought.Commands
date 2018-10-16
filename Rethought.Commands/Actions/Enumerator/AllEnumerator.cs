@@ -6,15 +6,17 @@ using System.Threading.Tasks;
 namespace Rethought.Commands.Actions.Enumerator
 {
     /// <summary>
-    ///     This enumerator enumerates the collection but does not stop at the first valid item
+    ///     This enumerator enumerates the collection and stops at the first <see cref="IAsyncResultFunc{TContext}" /> that
+    ///     returns <see cref="Result.Aborted" />.
     /// </summary>
     /// <typeparam name="TContext">The type of the context.</typeparam>
-    public sealed class ContinuingAll<TContext> : IAsyncResultFunc<TContext>
+    /// <seealso cref="IAsyncResultFunc{TContext}" />
+    public sealed class AllEnumerator<TContext> : IAsyncResultFunc<TContext>
     {
         private readonly IEnumerable<IAsyncResultFunc<TContext>> actionsAsyncs;
         private readonly Func<Result, bool> predicate;
 
-        private ContinuingAll(IEnumerable<IAsyncResultFunc<TContext>> actionAsyncsAsyncs, Func<Result, bool> predicate)
+        private AllEnumerator(IEnumerable<IAsyncResultFunc<TContext>> actionAsyncsAsyncs, Func<Result, bool> predicate)
         {
             actionsAsyncs = actionAsyncsAsyncs;
             this.predicate = predicate;
@@ -22,22 +24,19 @@ namespace Rethought.Commands.Actions.Enumerator
 
         public async Task<Result> InvokeAsync(TContext context, CancellationToken cancellationToken)
         {
-            var finalActionResult = Result.Completed;
-
             foreach (var actionAsync in actionsAsyncs)
             {
                 var actionResult = await actionAsync.InvokeAsync(context, cancellationToken).ConfigureAwait(false);
 
-                if (predicate.Invoke(actionResult))
-                    finalActionResult = actionResult;
+                if (predicate.Invoke(actionResult)) return actionResult;
             }
 
-            return finalActionResult;
+            return Result.Completed;
         }
 
-        public static ContinuingAll<TContext> Create(
+        public static AllEnumerator<TContext> Create(
             IEnumerable<IAsyncResultFunc<TContext>> actionAsyncs,
             Func<Result, bool> predicate)
-            => new ContinuingAll<TContext>(actionAsyncs, predicate);
+            => new AllEnumerator<TContext>(actionAsyncs, predicate);
     }
 }

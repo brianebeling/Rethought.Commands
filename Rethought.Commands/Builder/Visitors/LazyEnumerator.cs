@@ -7,22 +7,22 @@ using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Builder.Visitors
 {
-    public class LazyEnumerator<TContext> : IVisitor<TContext>
+    public class LazyEnumerator<TContext> : Visitor<TContext>
     {
         private readonly IEnumerable<System.Func<IAsyncResultFunc<TContext>>> asyncActions;
-        private readonly IFactory<TContext> factory;
+        private readonly IEnumeratorFactory<TContext> enumeratorFactory;
 
         public LazyEnumerator(
             IEnumerable<System.Func<IAsyncResultFunc<TContext>>> asyncActions,
-            IFactory<TContext> factory)
+            IEnumeratorFactory<TContext> enumeratorFactory)
         {
             this.asyncActions = asyncActions;
-            this.factory = factory;
+            this.enumeratorFactory = enumeratorFactory;
         }
 
-        public IAsyncResultFunc<TContext> Invoke(Option<IAsyncResultFunc<TContext>> nextAsyncActionOption)
+        public override IAsyncResultFunc<TContext> Invoke(Option<IAsyncResultFunc<TContext>> nextAsyncActionOption)
         {
-            var enumeratingAsyncAction = factory.Create(asyncActions.Select(x => x.Invoke()));
+            var enumeratingAsyncAction = enumeratorFactory.Create(asyncActions.Select(x => x.Invoke()));
 
             return nextAsyncActionOption.TryGetValue(out var nextAsyncAction)
                 ? Actions.Enumerator.Enumerator<TContext>.Create(enumeratingAsyncAction, nextAsyncAction)

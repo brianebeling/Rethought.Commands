@@ -22,7 +22,7 @@ namespace Rethought.Commands.Actions
         {
             if (parser.Parse(context).TryGetValue(out var value))
             {
-                return await command.InvokeAsync(value, cancellationToken);
+                return await command.InvokeAsync(value, cancellationToken).ConfigureAwait(false);
             }
 
             return Result.None;

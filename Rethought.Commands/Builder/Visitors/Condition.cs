@@ -6,7 +6,7 @@ using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Builder.Visitors
 {
-    public class Condition<TContext> : IVisitor<TContext>
+    public class Condition<TContext> : Visitor<TContext>
     {
         private readonly ICondition<TContext> condition;
 
@@ -15,7 +15,7 @@ namespace Rethought.Commands.Builder.Visitors
             this.condition = condition;
         }
 
-        public IAsyncResultFunc<TContext> Invoke(Option<IAsyncResultFunc<TContext>> nextAsyncActionOption)
+        public override IAsyncResultFunc<TContext> Invoke(Option<IAsyncResultFunc<TContext>> nextAsyncActionOption)
         {
             if (!nextAsyncActionOption.TryGetValue(out var nextAsyncAction))
             {

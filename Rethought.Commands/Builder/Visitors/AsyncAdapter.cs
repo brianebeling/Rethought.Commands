@@ -6,7 +6,7 @@ using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Builder.Visitors
 {
-    public class AsyncAdapter<TInput, TOutput> : IVisitor<TInput>
+    public class AsyncAdapter<TInput, TOutput> : Visitor<TInput>
     {
         private readonly IAsyncAbortableTypeParser<TInput, TOutput> asyncAbortableParser;
         private readonly System.Action<AsyncFuncBuilder<TOutput>> configuration;
@@ -19,7 +19,7 @@ namespace Rethought.Commands.Builder.Visitors
             this.configuration = configuration;
         }
 
-        public IAsyncResultFunc<TInput> Invoke(Option<IAsyncResultFunc<TInput>> nextAsyncActionOption)
+        public override IAsyncResultFunc<TInput> Invoke(Option<IAsyncResultFunc<TInput>> nextAsyncActionOption)
         {
             var asyncActionBuilder = AsyncFuncBuilder<TOutput>.Create();
             configuration.Invoke(asyncActionBuilder);

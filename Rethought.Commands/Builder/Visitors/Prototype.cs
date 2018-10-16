@@ -4,7 +4,7 @@ using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Builder.Visitors
 {
-    public class Prototype<TContext> : IVisitor<TContext>
+    public class Prototype<TContext> : Visitor<TContext>
     {
         private readonly IAsyncResultFunc<TContext> asyncResultFunc;
 
@@ -13,7 +13,7 @@ namespace Rethought.Commands.Builder.Visitors
             this.asyncResultFunc = asyncResultFunc;
         }
 
-        public IAsyncResultFunc<TContext> Invoke(Option<IAsyncResultFunc<TContext>> nextAsyncActionOption)
+        public override IAsyncResultFunc<TContext> Invoke(Option<IAsyncResultFunc<TContext>> nextAsyncActionOption)
             => nextAsyncActionOption.TryGetValue(out var nextAction)
                 ? Actions.Enumerator.Enumerator<TContext>.Create(asyncResultFunc, nextAction)
                 : asyncResultFunc;

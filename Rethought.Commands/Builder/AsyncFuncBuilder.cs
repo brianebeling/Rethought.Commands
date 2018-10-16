@@ -8,38 +8,43 @@ using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Builder
 {
-    public class AsyncFuncBuilder<TContext> : IAsyncFuncBuilder<TContext>
+    public class AsyncFuncBuilder<TContext>
     {
-        protected internal readonly IList<IVisitor<TContext>> Strategies = new List<IVisitor<TContext>>();
+        protected internal readonly IList<Visitor<TContext>> Visitors = new List<Visitor<TContext>>();
 
         private AsyncFuncBuilder()
         {
         }
 
-        public AsyncFuncBuilder<TContext> AddStrategy(IVisitor<TContext> buildingStep)
+        private AsyncFuncBuilder(IEnumerable<Visitor<TContext>> visitors)
         {
-            Strategies.Add(buildingStep);
+            this.Visitors = visitors.ToList();
+        }
+
+        public AsyncFuncBuilder<TContext> AddStrategy(Visitor<TContext> buildingStep)
+        {
+            Visitors.Add(buildingStep);
 
             return this;
         }
 
-        public AsyncFuncBuilder<TContext> InsertStrategy(IVisitor<TContext> buildingStep, int index)
+        public AsyncFuncBuilder<TContext> InsertStrategy(Visitor<TContext> buildingStep, int index)
         {
-            Strategies.Insert(index, buildingStep);
+            Visitors.Insert(index, buildingStep);
 
             return this;
         }
 
-        public AsyncFuncBuilder<TContext> RemoveStrategy(IVisitor<TContext> buildingStep)
+        public AsyncFuncBuilder<TContext> RemoveStrategy(Visitor<TContext> buildingStep)
         {
-            Strategies.Remove(buildingStep);
+            Visitors.Remove(buildingStep);
 
             return this;
         }
 
         public AsyncFuncBuilder<TContext> RemoveStrategy(int index)
         {
-            Strategies.RemoveAt(index);
+            Visitors.RemoveAt(index);
 
             return this;
         }
@@ -48,14 +53,14 @@ namespace Rethought.Commands.Builder
         {
             Option<IAsyncResultFunc<TContext>> next = default;
 
-            foreach (var action in Strategies.Reverse())
+            foreach (var action in Visitors.Reverse())
             {
                 next = action.Invoke(next).Some();
             }
 
-            if (!next.TryGetValue(out var value)) throw new InvalidOperationException("The configuration is invalid");
+            if (!next.TryGetValue(out var value)) throw new InvalidOperationException("Invalid configuration. There must at least be one visitor.");
 
-            Strategies.Clear();
+            Visitors.Clear();
 
             return value;
         }
@@ -63,6 +68,11 @@ namespace Rethought.Commands.Builder
         public static AsyncFuncBuilder<TContext> Create()
         {
             return new AsyncFuncBuilder<TContext>();
+        }
+
+        public static AsyncFuncBuilder<TContext> Create(IEnumerable<Visitor<TContext>> visitors)
+        {
+            return new AsyncFuncBuilder<TContext>(visitors);
         }
     }
 }
