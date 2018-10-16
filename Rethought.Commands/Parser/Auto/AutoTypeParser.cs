@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using Optional;
 using Optional.Collections;
@@ -124,7 +123,7 @@ namespace Rethought.Commands.Parser.Auto
                             ? element.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
                             : new[] { element })
                 .SelectMany(element => element)
-                .ToImmutableList();
+                .ToList();
         }
     }
 }
