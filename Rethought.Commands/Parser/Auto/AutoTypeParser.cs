@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Optional;
-using Optional.Collections;
-using Rethought.Extensions.Optional;
+using Rethought.Optional;
 
 namespace Rethought.Commands.Parser.Auto
 {
@@ -71,7 +69,7 @@ namespace Rethought.Commands.Parser.Auto
                         if (constructorParameterIsOption)
                         {
 
-                            var methodInfo = typeof(Option).GetMethods().FirstOrNone(x => x.Name == "Some" && x.GetGenericArguments().Length == 1);
+                            var methodInfo = typeof(Option<>).GetMethods().FirstOrNone(x => x.Name == "Some" && x.GetGenericArguments().Length == 1);
 
                             if (methodInfo.TryGetValue(out var value))
                             {
@@ -106,7 +104,7 @@ namespace Rethought.Commands.Parser.Auto
 
             var instance = constructorInfo.Invoke(parsedParameters.ToArray());
 
-            return Option.Some((TOutput) instance);
+            return (TOutput) instance;
         }
 
         /// <summary>

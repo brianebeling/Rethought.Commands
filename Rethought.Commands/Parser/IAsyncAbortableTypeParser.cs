@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Optional;
+using Rethought.Optional;
 
 namespace Rethought.Commands.Parser
 {

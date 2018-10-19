@@ -1,4 +1,4 @@
-﻿using Optional;
+﻿using Rethought.Optional;
 
 namespace Rethought.Commands.Parser
 {
@@ -13,7 +13,7 @@ namespace Rethought.Commands.Parser
 
         public Option<object> Parse(TInput input)
         {
-            return typeParser.Parse(input).Map(innerOption => (object) innerOption);
+            return typeParser.Parse(input);
         }
     }
 

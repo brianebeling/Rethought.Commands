@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Optional;
 using Rethought.Commands.Actions;
 using Rethought.Commands.Actions.Adapters.AsyncFunc;
 using Rethought.Commands.Actions.Adapters.System.Action;
@@ -12,6 +11,7 @@ using Rethought.Commands.Actions.Enumerator;
 using Rethought.Commands.Builder.Visitors;
 using Rethought.Commands.Conditions;
 using Rethought.Commands.Parser;
+using Rethought.Optional;
 
 namespace Rethought.Commands.Builder
 {

@@ -1,7 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Rethought.Commands.Parser;
-using Rethought.Extensions.Optional;
 
 namespace Rethought.Commands.Actions.Adapters.Context.AsyncResultFunc
 {

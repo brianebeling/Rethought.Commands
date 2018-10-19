@@ -1,9 +1,8 @@
 ﻿using System;
-using Optional;
 using Rethought.Commands.Actions;
 using Rethought.Commands.Actions.Conditions;
 using Rethought.Commands.Conditions;
-using Rethought.Extensions.Optional;
+using Rethought.Optional;
 
 namespace Rethought.Commands.Builder.Visitors
 {

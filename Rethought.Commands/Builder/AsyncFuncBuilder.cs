@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Optional;
 using Rethought.Commands.Actions;
 using Rethought.Commands.Builder.Visitors;
-using Rethought.Extensions.Optional;
+using Rethought.Optional;
 
 namespace Rethought.Commands.Builder
 {
@@ -55,7 +54,7 @@ namespace Rethought.Commands.Builder
 
             foreach (var action in Visitors.Reverse())
             {
-                next = action.Invoke(next).Some();
+                next = Option<IAsyncResultFunc<TContext>>.Some(action.Invoke(next));
             }
 
             if (!next.TryGetValue(out var value)) throw new InvalidOperationException("Invalid configuration. There must at least be one visitor.");

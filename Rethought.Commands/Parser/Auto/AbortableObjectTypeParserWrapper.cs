@@ -1,4 +1,4 @@
-﻿using Optional;
+﻿using Rethought.Optional;
 
 namespace Rethought.Commands.Parser.Auto
 {
@@ -16,7 +16,7 @@ namespace Rethought.Commands.Parser.Auto
         {
             if (typeParser.TryParse(input, out var output))
             {
-                option = output.Map(value => (object) value);
+                option = output;
                 return true;
             }
 

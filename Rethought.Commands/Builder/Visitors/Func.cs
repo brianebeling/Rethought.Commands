@@ -1,9 +1,8 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Optional;
 using Rethought.Commands.Actions;
 using Rethought.Commands.Actions.Adapters.ResultFunc;
-using Rethought.Extensions.Optional;
+using Rethought.Optional;
 
 namespace Rethought.Commands.Builder.Visitors
 {

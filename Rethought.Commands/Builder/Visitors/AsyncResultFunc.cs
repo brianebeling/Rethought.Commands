@@ -1,6 +1,5 @@
-﻿using Optional;
-using Rethought.Commands.Actions;
-using Rethought.Extensions.Optional;
+﻿using Rethought.Commands.Actions;
+using Rethought.Optional;
 
 namespace Rethought.Commands.Builder.Visitors
 {

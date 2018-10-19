@@ -1,4 +1,4 @@
-﻿using Optional;
+﻿using Rethought.Optional;
 
 namespace Rethought.Commands.Parser
 {

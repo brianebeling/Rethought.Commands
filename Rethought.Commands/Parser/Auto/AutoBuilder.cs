@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Optional;
+using Rethought.Optional;
 
 namespace Rethought.Commands.Parser.Auto
 {
