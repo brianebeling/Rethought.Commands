@@ -90,7 +90,7 @@ namespace Rethought.Commands.Parser.Auto
                         if (constructorParameterIsOption)
                         {
 
-                            var methodInfo = typeof(Option<>).GetMethods().FirstOrNone(x => x.Name == "Some" && x.GetGenericArguments().Length == 1);
+                            var methodInfo = typeof(Option).GetMethods().FirstOrNone(x => x.Name == "Some" && x.GetGenericArguments().Length == 1);
 
                             if (methodInfo.TryGetValue(out var value))
                             {
